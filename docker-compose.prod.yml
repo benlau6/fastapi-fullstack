@@ -1,0 +1,29 @@
+version: '3.8'
+# it overrides, so make sure to change the variables declared in .yml, which are unwanted in prod.yml
+# https://docs.docker.com/compose/extends/#different-environments
+services:
+  api:
+    command:
+      - /start.sh # for prod
+    env_file:
+      - .env
+    networks:
+      - backend
+  mongodb:
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - backend
+  mongo-express:
+    volumes: 
+      - mongodb-data:/data/db  
+    networks:
+      - backend
+  reverse-proxy:
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
+volumes:
+  mongodb-data:

@@ -1,0 +1,12 @@
+<body>
+    <form action="{{request.url_for('upload_files')}}" enctype="multipart/form-data" method="post">
+        <input name="files" type="file" multiple>
+        <input name="project" type="string">
+        <input name="dataset" type="string">
+        <input name="year" type="string">
+        <input name="month" type="string">
+        <input name="day" type="string">
+        <input name="filename" type="string">
+        <input type="submit">
+    </form>
+</body>
