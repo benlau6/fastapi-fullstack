@@ -5,7 +5,7 @@ from fastapi_crudrouter import MemoryCRUDRouter as CRUDRouter
 from app import schemas
 from app.core.config import settings
 from app.api import deps
-from app.api.v1.endpoints import login, users, upload, download
+from app.api.v1.endpoints import upload, download
 from app.api.fastapi_users_utils import (
     fastapi_users, 
     jwt_authentication, 

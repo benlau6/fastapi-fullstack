@@ -57,8 +57,6 @@ services:
 #networks:
 #  backend:
 #    driver: bridge
-volumes:
-  mongodb-data:
 
   #nginx:
   #  image: nginx:alpine

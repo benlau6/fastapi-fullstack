@@ -4,8 +4,8 @@
 
 ### To build all the containers with log shown
 ```
-git pull https://github.com/benlau6/fastapi-mongo-oauth.git
-docker-compose up --build
+git pull https://github.com/benlau6/fastapi-crud-users-permission.git
+docker-compose down ; docker-compose up --build
 ```
 
 ### Check api status
@@ -16,20 +16,21 @@ browse http://api.docker.localhost/api/status with response
 
 ### To get in the api container for dev / test
 ```
-docker exec -it fastapi-mongo-oauth_api_1 /bin/bash
+docker exec -it fastapi-crud-users-permission_api_1 /bin/bash
 ```
 
 ### To test everything
 ```
+# in api container
 pytest
 ```
 
 ## Documentation
 ### Runnable doc
-Goto 127.0.0.1/docs
+Goto api.docker.localhost/api/docs
 
 ### Printable doc
-Goto 127.0.0.1/redoc
+Goto api.docker.localhost/api/redoc
 
 
 ## Clean up

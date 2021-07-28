@@ -10,7 +10,7 @@ from app.models.user import user_db
 jwt_authentication = JWTAuthentication(
     secret=settings.SECRET_KEY, 
     lifetime_seconds=settings.ACCESS_TOKEN_EXPIRE_MINUTES//60, 
-    tokenUrl=settings.TOKEN_USER_URL
+    tokenUrl=settings.TOKEN_URL
 )
 
 cookie_authentication = CookieAuthentication(

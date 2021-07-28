@@ -1,15 +1,21 @@
 from typing import Any, Dict, Optional, Union
 
+from fastapi_users.user import UserNotExists
+
 from app.crud.base import CRUDBase
 
 from app.models.user import UserCreate, UserUpdate, UserInDB
 
 from app.api.fastapi_users_utils import fastapi_users
 
+
 class CRUDUser(CRUDBase[Dict, UserCreate, UserUpdate]):
     
     async def get_by_email(self, db, email: str) -> Optional[Dict]:
-        user = await fastapi_users.get_user(email)
+        try:
+            user = await fastapi_users.get_user(email)
+        except UserNotExists:
+            user = None
         return user
 
     async def create(self, db, obj_in):

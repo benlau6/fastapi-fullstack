@@ -1,10 +1,9 @@
+from typing import Dict
 import random
 import string
-from typing import Dict
 
 import pytest
-
-from fastapi.testclient import TestClient
+from async_asgi_testclient import TestClient
 
 from app.core import config
 
@@ -22,7 +21,7 @@ async def get_superuser_token_headers(client: TestClient, settings: config.Setti
         "username": settings.FIRST_SUPERUSER,
         "password": settings.FIRST_SUPERUSER_PASSWORD,
     }
-    r = await client.post(f"{settings.ROOT_STR}{settings.API_V1_STR}/auth/jwt/login", form=login_data)
+    r = await client.post(settings.TOKEN_URL, form=login_data)
     tokens = r.json()
     a_token = tokens["access_token"]
     headers = {"Authorization": f"Bearer {a_token}"}

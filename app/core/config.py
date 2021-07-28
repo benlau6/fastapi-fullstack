@@ -12,9 +12,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = '/v1'
     GRAPHQL_STR: str = '/graphql'
     SECRET_KEY: str = secrets.token_urlsafe(32)
-    TOKEN_RESOURCE_STR: str = '/login/access-token'
-    ######### fastapi-users #######
-    TOKEN_RESOURCE_STR_USER: str = "/auth/jwt/login"
+    TOKEN_RESOURCE_STR: str = '/auth/jwt/login'
     DATABASE_URL = "sqlite:///data/fastapi/dev.db"
     ###################
     # 60 minutes * 24 hours * 8 days = 8 days
@@ -46,12 +44,15 @@ class Settings(BaseSettings):
         env_file = '.env'
 
     @property
+    def AUTH_URL(self) -> str:
+        return f'{self.ROOT_STR}{self.API_V1_STR}/auth'
+
+    @property
     def TOKEN_URL(self) -> str:
         return f'{self.ROOT_STR}{self.API_V1_STR}{self.TOKEN_RESOURCE_STR}'
 
     @property
-    def TOKEN_USER_URL(self) -> str:
-        return f'{self.ROOT_STR}{self.API_V1_STR}{self.TOKEN_RESOURCE_STR_USER}'
-
+    def USERS_URL(self) -> str:
+        return f'{self.ROOT_STR}{self.API_V1_STR}/users'
 
 settings = Settings()

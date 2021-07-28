@@ -2,20 +2,15 @@ from typing import Dict, Generator
 import shutil
 
 import pytest
-from tortoise.contrib.test import finalizer, initializer
-from async_asgi_testclient import TestClient
-from fastapi.testclient import TestClient as fTestClient
 import asyncio
+from async_asgi_testclient import TestClient
+from tortoise.contrib.test import finalizer, initializer
 
-from app.core import config
 from app.main import app
+from app.core import config
 from app.api import deps
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
-
-from app.db.mongo import client as mongo_client
-from app import crud, schemas, models
-from app.api.fastapi_users_utils import fastapi_users
 
 
 test_root_path = '/data/fastapi'

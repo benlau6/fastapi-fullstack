@@ -12,7 +12,7 @@ def create_random_user(db) -> dict:
     email = random_email()
     password = random_lower_string()
     user_in = UserCreate(username=email, email=email, password=password)
-    user = crud.user.create(db, document_in=user_in)
+    user = crud.user.create(db, obj_in=user_in)
     return user
 
 
@@ -21,7 +21,7 @@ async def user_authentication_headers(
     *, client: TestClient, settings: config.Settings, email: str, password: str
 ) -> Dict[str, str]:
     data = {"username": email, "password": password}
-    r = await client.post(f"{settings.ROOT_STR}{settings.API_V1_STR}/login/access-token", data=data)
+    r = await client.post(settings.TOKEN_URL, form=data)
     response = r.json()
     auth_token = response["access_token"]
     headers = {"Authorization": f"Bearer {auth_token}"}
