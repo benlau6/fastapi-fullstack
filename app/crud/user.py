@@ -4,7 +4,7 @@ from fastapi_users.user import UserNotExists
 
 from app.crud.base import CRUDBase
 
-from app.models.user import UserCreate, UserUpdate, UserInDB
+from app.schemas.user import UserCreate, UserUpdate, UserInDB
 
 from app.api.fastapi_users_utils import fastapi_users
 
@@ -18,7 +18,7 @@ class CRUDUser(CRUDBase[Dict, UserCreate, UserUpdate]):
             user = None
         return user
 
-    async def create(self, db, obj_in):
+    async def create(self, db, obj_in: UserCreate):
         user = await fastapi_users.create_user(obj_in) 
         return user
 

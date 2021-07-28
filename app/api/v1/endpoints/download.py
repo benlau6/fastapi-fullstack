@@ -58,6 +58,6 @@ def download_zipped_folder(
     return StreamingResponse(iterfile(), media_type='application/zip')
 
 
-@router.get("/info", response_model=schemas.UserCheckScopes)
+@router.get("/info")
 async def get_info(current_user: schemas.User = Depends(deps.get_current_active_user)):
     return current_user

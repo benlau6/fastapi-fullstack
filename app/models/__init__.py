@@ -1,1 +1,1 @@
-from .user import UserModel, User, UserCreate, UserUpdate, UserInDB
+from .user import UserModel, user_db

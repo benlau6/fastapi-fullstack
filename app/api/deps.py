@@ -1,17 +1,10 @@
 from functools import lru_cache
 
-from jose import jwt
-from pydantic import ValidationError
 from fastapi import Header, HTTPException, Depends
-from fastapi.security import (
-    OAuth2PasswordBearer,
-    SecurityScopes,
-)
 
-from app import schemas, crud
-from app.core import security, config
+from app import schemas
+from app.core import config
 from app.core.config import settings # immutable
-from app.db.mongo import client
 
 
 ############# settings ###########
@@ -21,11 +14,8 @@ def get_settings():
 
 
 def get_db(settings: config.Settings = Depends(get_settings)):
-    return client[settings.MONGO_DB_NAME]
+    return None
 
-
-def get_user_collection(db = Depends(get_db)):
-    return db.user
 ##################################
 
 
@@ -44,16 +34,6 @@ async def verify_content_type(content_type: int = Header(...)):
 async def verify_key(x_api_key: str = Header(...)):
     if x_api_key != "key":
         raise HTTPException(status_code=400, detail="X-Api-Key header invalid")
-
-############ login #############
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=settings.TOKEN_URL,
-    scopes={
-        'me': 'Read information about the current user.',
-        'files': 'Upload/Download files.',
-    }
-)
-
 
 ############ fastapi-users #############
 from app.api.fastapi_users_utils import fastapi_users

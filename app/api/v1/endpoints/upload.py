@@ -59,6 +59,6 @@ async def upload_files(
 #    return templates.TemplateResponse('upload.html', {'request': request})
 
 
-@router.get("/info", response_model=schemas.UserCheckScopes)
+@router.get("/info")
 async def get_info(current_user: schemas.User = Depends(deps.get_current_active_user)):
     return current_user

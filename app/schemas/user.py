@@ -24,8 +24,3 @@ class UserInDB(User, models.BaseUserDB, PydanticModel):
     class Config:
         orm_mode = True
         orig_model = UserModel
-
-
-class UserCheckScopes(User):
-    scopes: Optional[List[str]] = None
-

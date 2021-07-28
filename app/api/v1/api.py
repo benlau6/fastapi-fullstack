@@ -1,6 +1,6 @@
-from fastapi import APIRouter
-from fastapi import Security
+from fastapi import APIRouter, Depends
 from fastapi_crudrouter import MemoryCRUDRouter as CRUDRouter
+
 
 from app import schemas
 from app.core.config import settings
@@ -17,8 +17,8 @@ from app.api.fastapi_users_utils import (
 
 
 router = APIRouter()
-#router.include_router(upload.router, prefix='/upload', tags=['upload'], dependencies=[Security(deps.get_current_active_user, scopes=settings.SCOPES_UPLOAD)])
-#router.include_router(download.router, prefix='/download', tags=['download'], dependencies=[Security(deps.get_current_active_user, scopes=settings.SCOPES_DOWNLOAD)])
+router.include_router(upload.router, prefix='/upload', tags=['upload'], dependencies=[Depends(deps.get_current_active_user)])
+router.include_router(download.router, prefix='/download', tags=['download'], dependencies=[Depends(deps.get_current_active_user)])
 router.include_router(CRUDRouter(schema=schemas.Potato))
 
 ## fastapi-users

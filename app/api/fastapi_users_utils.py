@@ -3,8 +3,8 @@ from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import JWTAuthentication, CookieAuthentication
 
 from app.core.config import settings
-from app.models import UserInDB, User, UserCreate, UserUpdate
-from app.models.user import user_db
+from app.schemas import UserInDB, User, UserCreate, UserUpdate
+from app.models import user_db
 
 
 jwt_authentication = JWTAuthentication(
