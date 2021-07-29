@@ -12,7 +12,9 @@ passlib[bcrypt]
 python-dotenv
 pytest
 pytest-asyncio
-async_asgi_testclient
+httpx
+httpx-oauth
+asgi-lifespan==1.*
 requests
 fastapi-crudrouter
 fastapi-permissions

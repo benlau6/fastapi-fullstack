@@ -3,7 +3,7 @@ import random
 import string
 
 import pytest
-from async_asgi_testclient import TestClient
+import httpx
 
 from app.core import config
 
@@ -15,14 +15,4 @@ def random_lower_string() -> str:
 def random_email() -> str:
     return f"{random_lower_string()}@{random_lower_string()}.com"
 
-@pytest.mark.asyncio
-async def get_superuser_token_headers(client: TestClient, settings: config.Settings) -> Dict[str, str]:
-    login_data = {
-        "username": settings.FIRST_SUPERUSER,
-        "password": settings.FIRST_SUPERUSER_PASSWORD,
-    }
-    r = await client.post(settings.TOKEN_URL, form=login_data)
-    tokens = r.json()
-    a_token = tokens["access_token"]
-    headers = {"Authorization": f"Bearer {a_token}"}
-    return headers
+

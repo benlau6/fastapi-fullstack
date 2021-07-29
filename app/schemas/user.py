@@ -13,6 +13,7 @@ class User(models.BaseUser):
 
 
 class UserCreate(models.BaseUserCreate):
+    principals: Optional[List[str]] = None
     pass
 
 

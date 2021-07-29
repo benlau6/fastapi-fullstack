@@ -18,13 +18,13 @@ cookie_authentication = CookieAuthentication(
     lifetime_seconds=settings.ACCESS_TOKEN_EXPIRE_MINUTES//60,
 )
 
-fastapi_users = FastAPIUsers(
-    user_db,
-    [jwt_authentication, cookie_authentication],
-    User,
-    UserCreate,
-    UserUpdate,
-    UserInDB,
+fastapi_users_instance = FastAPIUsers(
+    db=user_db,
+    auth_backends=[jwt_authentication, cookie_authentication],
+    user_model=User,
+    user_create_model=UserCreate,
+    user_update_model=UserUpdate,
+    user_db_model=UserInDB,
 )
 
 
