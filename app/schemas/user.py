@@ -1,11 +1,8 @@
 from typing import List, Optional
 
 from fastapi_users import models
-from fastapi_users.db import TortoiseBaseUserModel, TortoiseUserDatabase
 from tortoise.contrib.pydantic import PydanticModel
-
-class UserModel(TortoiseBaseUserModel):
-    pass
+from app.models.user import UserModel
 
 
 class User(models.BaseUser):
@@ -14,7 +11,6 @@ class User(models.BaseUser):
 
 class UserCreate(models.BaseUserCreate):
     principals: Optional[List[str]] = None
-    pass
 
 
 class UserUpdate(User, models.BaseUserUpdate):

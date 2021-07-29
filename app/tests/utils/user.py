@@ -26,9 +26,9 @@ async def get_superuser_token_headers(
     }
     r = await client.post(settings.TOKEN_URL, data=login_data)
     tokens = r.json()
-    #a_token = tokens["access_token"]
-    #headers = {"Authorization": f"Bearer {a_token}"}
-    return tokens
+    a_token = tokens["access_token"]
+    headers = {"Authorization": f"Bearer {a_token}"}
+    return headers
 
 
 @pytest.mark.asyncio
@@ -58,22 +58,3 @@ async def user_authentication_headers(
     auth_token = response["access_token"]
     headers = {"Authorization": f"Bearer {auth_token}"}
     return headers
-
-
-@pytest.mark.asyncio
-async def authentication_token_from_email(
-    *, client: httpx.AsyncClient, settings: config.Settings, mock_fastapi_users_instance, principals: List[str]
-) -> Dict[str, str]:
-    """
-    Return a valid token for the user with given email.
-    If the user doesn't exist it is created first.
-    """
-    email=random_email()
-    password = random_lower_string()
-    user = await mock_fastapi_users_instance.get_user(email)
-    if not user:
-        user_in_create = UserCreate(email=email, password=password, principals=principals)
-        user = await mock_fastapi_users_instance.create(user_in_create)
-
-    return await user_authentication_headers(client=client, settings=settings, email=email, password=password)
-

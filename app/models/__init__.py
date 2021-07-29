@@ -1,1 +1,1 @@
-from .user import UserModel, user_db
+from .user import UserModel

@@ -5,6 +5,7 @@ import httpx
 
 from app.core import config
 from app.schemas.user import UserCreate
+from app.api.fastapi_users_utils import fastapi_users_instance
 from app.tests.utils.utils import random_email, random_lower_string
 
 # https://fastapi.tiangolo.com/tutorial/testing/

@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     GRAPHQL_STR: str = '/graphql'
     SECRET_KEY: str = secrets.token_urlsafe(32)
     TOKEN_RESOURCE_STR: str = '/auth/jwt/login'
-    DATABASE_URL = "sqlite:///data/fastapi/dev.db"
+    DATABASE_URL: str =  "sqlite:///data/fastapi/dev.db"
     ###################
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
@@ -21,9 +21,9 @@ class Settings(BaseSettings):
     MONGO_DB_NAME: str = 'fastapi'
     MONGO_USER_COLLECTION_NAME: str = 'user'
     PAYLOAD_LIMIT: int = 2000000
-    FIRST_SUPERUSER: str = 'admin@example.com'
+    FIRST_SUPERUSER: str = 'admin@gmail.com'
     FIRST_SUPERUSER_PASSWORD: str = 'password'
-    EMAIL_TEST_USER: str = 'test@example.com'
+    EMAIL_TEST_USER: str = 'user@gmail.com'
     EMAIL_TEST_USER_PASSWORD: str = 'password'
     USERS_OPEN_REGISTRATION: bool = True
     EMAIL_PROVIDER_RESTRICTION: bool = False
