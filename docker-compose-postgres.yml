@@ -1,0 +1,93 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    # for direct entry: 127.0.0.1:3000
+    command:
+      - /start-reload.sh # for dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./app:/app/app # for dev
+      - ./data/api:/data/fastapi # for dev
+    environment: 
+      # check for env: https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
+      - PORT=3000
+      - LOG_LEVEL=debug
+    labels:
+      # Enable Traefik for this specific "backend" service
+      - traefik.enable=true
+      # Define the port inside of the Docker service to use (shd be same as env:PORT)
+      - traefik.http.services.app.loadbalancer.server.port=3000
+      # Make Traefik use this domain in HTTP
+      - traefik.http.routers.api.entrypoints=http
+      - traefik.http.routers.api.rule=Host(`api.docker.localhost`) && PathPrefix(`/api`)
+      - traefik.http.middlewares.stripprefix.stripprefix.prefixes=/api
+      # Sets the maximum request body to 200MB
+      - traefik.http.middlewares.sizelimit.buffering.maxRequestBodyBytes=200000000
+      # Apply middlewares
+      - traefik.http.routers.api.middlewares=stripprefix@docker,sizelimit@docker
+    #networks:
+    #  - backend
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=dev
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/root/.pgadmin    
+  reverse-proxy:
+    image: traefik
+    ports:
+      # Listen on port 80, default for HTTP, necessary to redirect to HTTPS
+      - 80:80
+      - 8080:8080
+    #networks:
+    #  - backend
+    volumes:
+      # Add Docker as a mounted volume, so that Traefik can read the labels of other services
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    command:
+      # Enable Docker in Traefik, so that it reads labels from Docker services
+      - --providers.docker
+      # Do not expose all Docker services, only the ones explicitly exposed
+      - --providers.docker.exposedbydefault=false
+      # Create an entrypoint "http" listening on port 80
+      - --entrypoints.http.address=:80
+      # Enable the access log, with HTTP requests
+      - --accesslog
+      # Enable the Traefik log, for configurations and errors
+      - --log
+      # Enable the Dashboard and API
+      #- --api
+      - --api.insecure=true
+volumes:
+  postgres-data:
+  pgadmin:
+
+#networks:
+#  backend:
+#    driver: bridge
+
+  #nginx:
+  #  image: nginx:alpine
+  #  ports:
+  #    - 80:80
+  #  volumes:
+  #    - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #  depends_on:
+  #    - api

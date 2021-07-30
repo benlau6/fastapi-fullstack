@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     GRAPHQL_STR: str = '/graphql'
     SECRET_KEY: str = secrets.token_urlsafe(32)
     TOKEN_RESOURCE_STR: str = '/auth/jwt/login'
-    DATABASE_URL: str =  "sqlite:///data/fastapi/dev.db"
+    DATABASE_URL: str = "sqlite:///data/fastapi/dev.db"
     ###################
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
@@ -30,8 +30,8 @@ class Settings(BaseSettings):
     ALLOWED_EMAIL_PROVIDER_LIST: List[str] = ['mtr', 'gmail', 'example', 'test']
 
     ############# scopes #############
-    SCOPES_UPLOAD: List[str] = ['files:upload']
-    SCOPES_DOWNLOAD: List[str] = ['files:download']
+    #SCOPES_UPLOAD: List[str] = ['files:upload']
+    #SCOPES_DOWNLOAD: List[str] = ['files:download']
 
     #URL_DEFAULT_TTL=300
     #QUERY_DEFAULT_TTL=10
@@ -54,5 +54,6 @@ class Settings(BaseSettings):
     @property
     def USERS_URL(self) -> str:
         return f'{self.ROOT_STR}{self.API_V1_STR}/users'
+
 
 settings = Settings()

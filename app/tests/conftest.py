@@ -20,18 +20,17 @@ from app.tests.utils.utils import random_email, random_lower_string
 
 
 test_root_path = '/data/fastapi'
+test_database_url = 'sqlite:///data/fastapi/test.db'
 
-# DATABASE_URL DOES NOT CHANGE
-modified_settings = config.Settings(DATABASE_URL='sqlite:///data/fastapi/test.db', ROOT_STR='', FILE_ROOT_PATH=test_root_path)
-main_app = create_app()
-#
-#
 def get_settings_override():
-    return modified_settings.DATABASE_URL
+    return config.Settings(DATABASE_URL=test_database_url, ROOT_STR='', FILE_ROOT_PATH=test_root_path)
 
+# DATABASE_URL DOES NOT CHANGE#
+#
+#
 @pytest.fixture(scope='session')
 def settings():
-    return modified_settings
+    return get_settings_override()
 #
 
 @pytest.fixture
@@ -87,14 +86,16 @@ def new_superuser_in_data() -> schemas.UserCreate:
         is_verified=True,
     )
 
+
 # it auto executes once, for tortoise orm, making app as created_app() is for this not to be ignored, without specifying db_url, it stored in memory
 @pytest.fixture(scope="session", autouse=True)
-def initialize_tests(request):
+def initialize_tests(request, settings):
     initializer(
         ["app.models"],
-        db_url=modified_settings.DATABASE_URL
+        db_url=settings.DATABASE_URL
     )
     request.addfinalizer(finalizer)
+
 
 # it auto executes once, then cached returned obj until end of tests, perfect usecase for init user
 @pytest.fixture(scope='session', autouse=True)
@@ -122,11 +123,12 @@ async def superuser() -> schemas.UserCreate:
     await fastapi_users_instance.create_user(obj_in)
     return obj_in
 
-
+from app.api.deps import Permission
+from fastapi_permissions import Allow
 @pytest.fixture
 async def app(settings, normal_user, superuser):
-    main_app.dependency_overrides[deps.get_settings] = get_settings_override  
-    main_app.DATABASE_URL = modified_settings.DATABASE_URL
+    main_app = create_app()
+    main_app.dependency_overrides[deps.get_settings] = settings  
 
     @main_app.get("/test-current-user")
     def test_current_user(user: schemas.UserInDB = Depends(fastapi_users_instance.current_user())):
@@ -146,9 +148,15 @@ async def app(settings, normal_user, superuser):
     ):
         return user
 
+    example_acl = [(Allow, "role:admin", "view")]
+    @main_app.get("/test-user-permission")
+    def test_user_permission(
+        acls: list = Permission('view', example_acl),
+    ):
+        return {'status': 'OK'}
+
     #@app.on_event("startup")
     #async def init_orm() -> None:  # pylint: disable=W0612
-
 
     async with LifespanManager(main_app):
         yield main_app
@@ -162,17 +170,8 @@ async def client(app) -> AsyncGenerator[httpx.AsyncClient, None]:
 #from tortoise import Tortoise
 #
 #
-#def pytest_sessionstart(session):
-#    async def init():
-#        # Here we create a SQLite DB using file "db.sqlite3"
-#        #  also specify the app name of "models"
-#        #  which contain models from "app.models"
-#        await Tortoise.init(
-#            db_url='sqlite://db.sqlite3',
-#            modules={'models': ['app.models']}
-#        )
-#        # Generate the schema
-#        await Tortoise.generate_schemas()
+def pytest_sessionstart(session):
+    pass
 
 #
 def pytest_sessionfinish(session, exitstatus):

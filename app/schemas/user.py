@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from fastapi_users import models
 from tortoise.contrib.pydantic import PydanticModel

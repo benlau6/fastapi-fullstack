@@ -18,8 +18,6 @@ from app.core.config import settings
 
 router = APIRouter()
 
-scopes = settings.SCOPES_DOWNLOAD
-
 templates = Jinja2Templates(directory="/app/app/templates")
 
 
