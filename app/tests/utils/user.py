@@ -7,6 +7,7 @@ from app import schemas
 from app.core import config
 from app.schemas.user import UserCreate, UserUpdate
 from app.tests.utils.utils import random_email, random_lower_string
+from app.api.fastapi_users_utils import fastapi_users_instance
 
 
 @pytest.fixture
@@ -20,10 +21,7 @@ async def get_superuser_token_headers(
     settings: config.Settings, 
     superuser
     ) -> Dict[str, str]:
-    login_data = {
-        "username": superuser.email,
-        "password": 'password',
-    }
+    login_data = {"username": superuser.email, "password": 'password',}
     r = await client.post(settings.TOKEN_URL, data=login_data)
     tokens = r.json()
     a_token = tokens["access_token"]
@@ -37,10 +35,7 @@ async def get_normal_user_token_headers(
     settings: config.Settings, 
     user,
     ) -> Dict[str, str]:
-    login_data = {
-        "username": user.email,
-        "password": 'password',
-    }
+    login_data = {"username": user.email, "password": 'password'}
     r = await client.post(settings.TOKEN_URL, data=login_data)
     tokens = r.json()
     a_token = tokens["access_token"]
@@ -49,11 +44,21 @@ async def get_normal_user_token_headers(
 
 
 @pytest.mark.asyncio
-async def user_authentication_headers(
-    *, client: httpx.AsyncClient, settings: config.Settings, email: str, password: str
+async def get_custom_user_token_headers(
+    client: httpx.AsyncClient, 
+    settings: config.Settings, 
+    principals: List[str]
 ) -> Dict[str, str]:
-    data = {"username": email, "password": password}
-    r = await client.post(settings.TOKEN_URL, form=data)
+    email=random_email()
+    password=random_lower_string()
+    obj_in = schemas.UserCreate(
+        email=email,
+        password=password,
+        principals=['user:'+email] + principals
+    )
+    await fastapi_users_instance.create_user(obj_in)
+    login_data = {"username": email, "password": password}
+    r = await client.post(settings.TOKEN_URL, data=login_data)
     response = r.json()
     auth_token = response["access_token"]
     headers = {"Authorization": f"Bearer {auth_token}"}

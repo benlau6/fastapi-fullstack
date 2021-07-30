@@ -12,7 +12,7 @@ from app.core.config import settings
 router = APIRouter()
 
 
-@router.get("/all", response_model=List[schemas.User])
+@router.get("", response_model=List[schemas.User])
 async def get_users(
     skip: int = 0,
     limit: int = 100,
@@ -20,4 +20,4 @@ async def get_users(
     """
     Retrieve users.
     """
-    return await models.UserModel.all()
+    return await models.UserModel.all().offset(skip).limit(limit)

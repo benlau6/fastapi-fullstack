@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi_crudrouter import MemoryCRUDRouter as CRUDRouter
-
+from fastapi_permissions import Allow, Deny, All, Authenticated
 
 from app import schemas
 from app.core.config import settings
@@ -14,13 +14,36 @@ from app.api.fastapi_users_utils import (
     on_after_forgot_password,
     after_verification_request
 )
+from app.api.fastapi_permissions_utils import Permission
 
 
 router = APIRouter()
-router.include_router(upload.router, prefix='/upload', tags=['upload'], dependencies=[Depends(deps.get_current_active_user)])
-router.include_router(download.router, prefix='/download', tags=['download'], dependencies=[Depends(deps.get_current_active_user)])
+
 router.include_router(users.router, prefix='/users', tags=['users'])
 router.include_router(CRUDRouter(schema=schemas.Potato))
+
+upload_acl = [
+    (Allow, Authenticated, "view"),
+    (Allow, 'role:admin', All)
+]
+router.include_router(
+    upload.router, 
+    prefix='/upload', 
+    tags=['upload'], 
+    dependencies=[Permission('view', upload_acl)]
+)
+
+download_acl = [
+    (Allow, Authenticated, "view"),
+    (Allow, 'role:admin', All)
+]
+router.include_router(
+    download.router, 
+    prefix='/download', 
+    tags=['download'], 
+    dependencies=[Permission('view', download_acl)]
+)
+
 
 ## fastapi-users
 router.include_router(fastapi_users_instance.get_users_router(), prefix="/users", tags=["users"])

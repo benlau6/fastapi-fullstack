@@ -2,9 +2,6 @@ from typing import Dict
 import random
 import string
 
-import pytest
-import httpx
-
 from app.core import config
 
 

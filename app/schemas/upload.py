@@ -1,9 +1,11 @@
 from typing import Optional, List 
 from datetime import datetime, timedelta
+
 from pydantic import BaseModel, EmailStr
 from fastapi import Form
-from app.schemas.utils import as_form
+from fastapi_permissions import Allow, Authenticated, All
 
+from app.schemas.utils import as_form
 
 
 class UploadRecord(BaseModel):
@@ -30,6 +32,13 @@ class UploadForm(BaseModel):
     year: int = Form(..., ge=2000)
     month: int = Form(..., ge=1, le=12)
     day: int = Form(..., ge=1, le=31)
+
+    def __acl__(self):
+        return [
+        (Allow, "role:admin", All),
+        (Allow, f"upload:{self.project}:all", "submit"),
+        (Allow, f"upload:{self.project}:{self.dataset}", "submit"),
+    ]
 
     @property
     def date_padding_prefix(self):

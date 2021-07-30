@@ -14,9 +14,15 @@ from fastapi import status
         ("/v1/auth/jwt/login", "POST"),
         ("/v1/auth/cookie/login", "POST"),
         ("/v1/auth/cookie/logout", "POST"),
-        ("/v1/users/d35d213e-f3d8-4f08-954a-7e0d1bea286f", "GET"),
+        ("/v1/users", "GET"),
+        ("/v1/users/d35d213e-f3d8-4f08-954a-7e0d1bea286f", "GET"), # dummy uuid4 to test it exists
         ("/v1/users/d35d213e-f3d8-4f08-954a-7e0d1bea286f", "PATCH"),
         ("/v1/users/d35d213e-f3d8-4f08-954a-7e0d1bea286f", "DELETE"),
+        ("/v1/upload/info", "GET"),
+        ("/v1/upload/files", "POST"),
+        ("/v1/download/info", "GET"),
+        ("/v1/download/files", "GET"),
+        ("/v1/download/files/d35d213e-f3d8-4f08-954a-7e0d1bea286f", "GET"),
     ],
 )
 async def test_route_exists(client: httpx.AsyncClient, path: str, method: str):

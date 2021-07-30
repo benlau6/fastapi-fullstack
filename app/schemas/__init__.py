@@ -1,6 +1,6 @@
 #from .item import ItemIn, ItemOut, ItemOutAntd, ItemSort, ItemUpdate
 from .upload import UploadRecord, UploadForm, UploadRecords
-from .download import DownloadForm
+from .download import DownloadQuery
 from .user import User, UserCreate, UserUpdate, UserInDB
 from .token import Token, TokenData
 from .msg import Msg

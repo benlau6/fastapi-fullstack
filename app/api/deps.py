@@ -36,32 +36,13 @@ async def verify_key(x_api_key: str = Header(...)):
         raise HTTPException(status_code=400, detail="X-Api-Key header invalid")
 
 ############ fastapi-users #############
-from app.api.fastapi_users_utils import fastapi_users_instance
-
-
-get_current_user = fastapi_users_instance.current_user()
-
-get_current_active_user = fastapi_users_instance.current_user(active=True)
-
-get_current_active_verified_user = fastapi_users_instance.current_user(active=True, verified=True)
-
-get_current_active_superuser = fastapi_users_instance.current_user(active=True, superuser=True)
+from app.api.fastapi_users_utils import (
+    get_current_user, 
+    get_current_active_user, 
+    get_current_active_verified_user,
+    get_current_active_superuser,
+)
 
 ########### fastapi-permission #########
-from fastapi_permissions import configure_permissions
-from fastapi_permissions import Authenticated, Everyone
-
-
-def get_current_active_user_principals(current_user: schemas.User = Depends(get_current_user)):
-    if current_user is not None:
-        # user is logged in
-        principals = [Everyone, Authenticated]
-        principals.extend(getattr(current_user, "principals", []))
-    else:
-        # user is not logged in
-        principals = [Everyone]
-    return principals
-
-# Permission is already wrapped in Depends()
-Permission = configure_permissions(get_current_active_user_principals)
+from app.api.fastapi_permissions_utils import Permission
 ###############################

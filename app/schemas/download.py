@@ -1,17 +1,23 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 from fastapi import Form
-from app.schemas.utils import as_form
-from datetime import datetime
-from app.core.config import settings
+from fastapi_permissions import Allow, Authenticated, All
 
 
-@as_form
-class DownloadForm(BaseModel):
+class DownloadQuery(BaseModel):
     project: str = Form(...)
     dataset: str = Form(...)
     year: int = Form(..., ge=2000, le=datetime.now().year+1)
     month: int = Form(..., ge=1, le=12)
     day: int = Form(..., ge=1, le=31)
+
+    def __acl__(self):
+        return [
+        (Allow, "role:admin", All),
+        (Allow, f"download:{self.project}:all", "submit"),
+        (Allow, f"download:{self.project}:{self.dataset}", "submit"),
+    ]
 
     @property
     def date_padding_prefix(self):

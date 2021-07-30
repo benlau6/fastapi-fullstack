@@ -22,9 +22,7 @@ class Settings(BaseSettings):
     MONGO_USER_COLLECTION_NAME: str = 'user'
     PAYLOAD_LIMIT: int = 2000000
     FIRST_SUPERUSER: str = 'admin@gmail.com'
-    FIRST_SUPERUSER_PASSWORD: str = 'password'
-    EMAIL_TEST_USER: str = 'user@gmail.com'
-    EMAIL_TEST_USER_PASSWORD: str = 'password'
+    FIRST_NORMAL_USER: str = 'user@gmail.com'
     USERS_OPEN_REGISTRATION: bool = True
     EMAIL_PROVIDER_RESTRICTION: bool = False
     ALLOWED_EMAIL_PROVIDER_LIST: List[str] = ['mtr', 'gmail', 'example', 'test']
@@ -54,6 +52,14 @@ class Settings(BaseSettings):
     @property
     def USERS_URL(self) -> str:
         return f'{self.ROOT_STR}{self.API_V1_STR}/users'
+
+    @property
+    def DOWNLOAD_URL(self) -> str:
+        return f'{self.ROOT_STR}{self.API_V1_STR}/download'
+
+    @property
+    def UPLOAD_URL(self) -> str:
+        return f'{self.ROOT_STR}{self.API_V1_STR}/upload'
 
 
 settings = Settings()

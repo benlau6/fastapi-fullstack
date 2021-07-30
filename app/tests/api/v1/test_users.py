@@ -31,41 +31,35 @@ async def test_get_users_normal_user_me(
     assert current_user
     assert current_user["is_active"] is True
     assert current_user["is_superuser"] is False
-    assert current_user["email"] == settings.EMAIL_TEST_USER
+    assert current_user["email"] == settings.FIRST_NORMAL_USER
 
 
-#@pytest.mark.asyncio
-#async def test_get_existing_user(
-#    client: httpx.AsyncClient, settings: config.Settings, mock_fastapi_users_instance, superuser_token_headers: dict, db
-#) -> None:
-#    username = random_email()
-#    password = random_lower_string()
-#    user_in = UserCreate(email=username, password=password)
-#    user = await mock_fastapi_users_instance.create(obj_in=user_in)
-#    user_id = user.id
-#    r = await client.get(
-#        f"{settings.USERS_URL}/{user_id}", headers=superuser_token_headers,
-#    )
-#    assert 200 <= r.status_code < 300
-#    api_user = r.json()
-#    existing_user = await mock_fastapi_users_instance.get_user(username)
-#    assert existing_user
-#    assert existing_user.email == api_user["email"]
-#    assert 'hashed_password' not in api_user
-#    assert 'password' not in api_user
-#
-#
-#@pytest.mark.asyncio
-#async def test_register(
-#    client: httpx.AsyncClient, settings: config.Settings, normal_user_token_headers: Dict[str, str]
-#) -> None:
-#    username = random_email()
-#    password = random_lower_string()
-#    data = {"email": username, "password": password}
-#    r = await client.post(
-#        f'{settings.AUTH_URL}/register', headers=normal_user_token_headers, json=data,
-#    )
-#    created_user = r.json()
-#    assert r.status_code == 201
-#    assert 'hashed_password' not in created_user
-#    assert 'password' not in created_user
+@pytest.mark.asyncio
+async def test_get_existing_user(
+    client: httpx.AsyncClient, settings: config.Settings, superuser_token_headers: Dict[str, str]
+, new_user) -> None:
+    user_id = new_user.id
+    r = await client.get(
+        f"{settings.USERS_URL}/{user_id}", headers=superuser_token_headers,
+    )
+    assert 200 <= r.status_code < 300
+    found_user = r.json()
+    assert found_user
+    assert found_user['email'] == new_user.email
+
+
+@pytest.mark.asyncio
+async def test_register(
+    client: httpx.AsyncClient, settings: config.Settings
+) -> None:
+    username = random_email()
+    password = random_lower_string()
+    register_data = {"email": username, "password": password}
+    r = await client.post(
+        f'{settings.AUTH_URL}/register', json=register_data, #or data if already jsonalized
+    )
+    assert r.status_code == 201
+    created_user = r.json()
+    assert created_user['principals'] == [f'user:{username}']
+    assert 'hashed_password' not in created_user
+    assert 'password' not in created_user

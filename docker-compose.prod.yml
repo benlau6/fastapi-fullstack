@@ -5,25 +5,25 @@ services:
   api:
     command:
       - /start.sh # for prod
-    env_file:
-      - .env
-    networks:
-      - backend
-  mongodb:
-    volumes:
-      - mongodb-data:/data/db
-    networks:
-      - backend
-  mongo-express:
-    volumes: 
-      - mongodb-data:/data/db  
-    networks:
-      - backend
-  reverse-proxy:
-    networks:
-      - backend
-networks:
-  backend:
-    driver: bridge
-volumes:
-  mongodb-data:
+#    env_file:
+#      - .env
+#    networks:
+#      - backend
+#  mongodb:
+#    volumes:
+#      - mongodb-data:/data/db
+#    networks:
+#      - backend
+#  mongo-express:
+#    volumes: 
+#      - mongodb-data:/data/db  
+#    networks:
+#      - backend
+#  reverse-proxy:
+#    networks:
+#      - backend
+#networks:
+#  backend:
+#    driver: bridge
+#volumes:
+#  mongodb-data:

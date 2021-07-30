@@ -1,19 +1,18 @@
 from typing import List
-
-from fastapi import APIRouter
-
-from app import schemas
-
-from fastapi import Depends, Security, BackgroundTasks
-from fastapi.responses import FileResponse, StreamingResponse 
-
-from fastapi.templating import Jinja2Templates
-
-from app.core import config
-from app.api import deps
 import os
 import shutil
-from app.core.config import settings
+
+
+from fastapi import APIRouter
+from fastapi import Depends, Security, BackgroundTasks
+from fastapi.responses import FileResponse, StreamingResponse 
+from fastapi.templating import Jinja2Templates
+
+from app import schemas
+from app.core import config
+from app.api import deps
+from app.api.fastapi_permissions_utils import Permission
+
 
 
 router = APIRouter()
@@ -28,11 +27,10 @@ def remove_file(path: str) -> None:
 @router.get("/files/{filename}")
 async def download_file(
     filename: str,
-    form: schemas.DownloadForm = Depends(schemas.DownloadForm.as_form),
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    query: schemas.DownloadQuery = Permission('submit', schemas.DownloadQuery),
     settings: config.Settings = Depends(deps.get_settings)
     ):
-    file_path = f'{settings.FILE_ROOT_PATH}/{form.base_dir}/{filename}'
+    file_path = f'{settings.FILE_ROOT_PATH}/{query.base_dir}/{filename}'
     def iterfile():  
         with open(file_path, mode="rb") as file:  
             yield from file  
@@ -42,12 +40,11 @@ async def download_file(
 @router.get("/files")
 def download_zipped_folder(
     background_tasks: BackgroundTasks,
-    form: schemas.DownloadForm = Depends(schemas.DownloadForm.as_form),
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    query: schemas.DownloadQuery = Permission('submit', schemas.DownloadQuery),
     settings: config.Settings = Depends(deps.get_settings)
     ):
-    shutil.make_archive(f'{settings.FILE_ROOT_PATH}/tmp/{form.zip_filename}', 'zip', root_dir=settings.FILE_ROOT_PATH, base_dir=form.base_dir)
-    zip_file_path = f'{settings.FILE_ROOT_PATH}/tmp/{form.zip_filename}.zip'
+    shutil.make_archive(f'{settings.FILE_ROOT_PATH}/tmp/{query.zip_filename}', 'zip', root_dir=settings.FILE_ROOT_PATH, base_dir=query.base_dir)
+    zip_file_path = f'{settings.FILE_ROOT_PATH}/tmp/{query.zip_filename}.zip'
     def iterfile():  
         with open(zip_file_path, mode="rb") as file:  
             yield from file  
@@ -56,6 +53,6 @@ def download_zipped_folder(
     return StreamingResponse(iterfile(), media_type='application/zip')
 
 
-@router.get("/info")
+@router.get("/info", response_model=schemas.User)
 async def get_info(current_user: schemas.User = Depends(deps.get_current_active_user)):
     return current_user
