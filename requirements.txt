@@ -1,14 +1,7 @@
-#pynamodb
-#boto3
-#botocore
 fastapi
 pydantic[email]
 python-multipart
 aiofiles
-jinja2
-pymongo
-python-jose[cryptography]
-passlib[bcrypt]
 python-dotenv
 pytest
 pytest-asyncio

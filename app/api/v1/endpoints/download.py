@@ -1,12 +1,9 @@
-from typing import List
 import os
 import shutil
 
-
 from fastapi import APIRouter
-from fastapi import Depends, Security, BackgroundTasks
-from fastapi.responses import FileResponse, StreamingResponse 
-from fastapi.templating import Jinja2Templates
+from fastapi import Depends, BackgroundTasks
+from fastapi.responses import StreamingResponse 
 
 from app import schemas
 from app.core import config
@@ -14,10 +11,7 @@ from app.api import deps
 from app.api.fastapi_permissions_utils import Permission
 
 
-
 router = APIRouter()
-
-templates = Jinja2Templates(directory="/app/app/templates")
 
 
 def remove_file(path: str) -> None:

@@ -1,7 +1,6 @@
   
 import pytest
 
-from app import schemas
 from app.api.fastapi_users_utils import fastapi_users_instance
 
 

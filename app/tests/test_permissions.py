@@ -1,7 +1,6 @@
 import pytest
 import httpx
 
-from app.core import config
 from app.api.fastapi_users_utils import fastapi_users_instance
 
 @pytest.mark.asyncio

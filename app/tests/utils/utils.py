@@ -1,8 +1,5 @@
-from typing import Dict
 import random
 import string
-
-from app.core import config
 
 
 def random_lower_string() -> str:

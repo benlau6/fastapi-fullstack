@@ -5,7 +5,6 @@ import httpx
 
 from app import schemas
 from app.core import config
-from app.schemas.user import UserCreate, UserUpdate
 from app.tests.utils.utils import random_email, random_lower_string
 from app.api.fastapi_users_utils import fastapi_users_instance
 

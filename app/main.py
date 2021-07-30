@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 
@@ -42,7 +42,7 @@ register_tortoise(
 async def init_first_super_user() -> None:
     email = settings.FIRST_SUPERUSER
     found_users = await models.UserModel.filter(email=email).count()
-    if found_users != 1:
+    if found_users < 1:
         obj_in = schemas.UserCreate(
             email=email,
             password='password',
@@ -55,4 +55,3 @@ async def init_first_super_user() -> None:
 @app.on_event('shutdown')
 async def del_first_super_user() -> None:
     pass
-

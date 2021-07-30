@@ -1,12 +1,8 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
-from pydantic.networks import EmailStr
+from fastapi import APIRouter
 
 from app import schemas, models
-from app.api import deps
-from app.core.config import settings
 
 
 router = APIRouter()

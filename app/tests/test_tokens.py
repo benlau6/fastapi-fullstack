@@ -4,7 +4,6 @@ import pytest
 import httpx
 
 from app.core import config
-from app.api.fastapi_users_utils import fastapi_users_instance
 from app.tests.utils.user import get_custom_user_token_headers
 
 @pytest.mark.asyncio

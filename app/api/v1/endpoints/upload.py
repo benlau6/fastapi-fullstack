@@ -4,8 +4,7 @@ import shutil
 
 import asyncio
 from fastapi import APIRouter
-from fastapi import File, UploadFile, Depends, Security, BackgroundTasks
-from fastapi.templating import Jinja2Templates
+from fastapi import File, UploadFile, Depends, BackgroundTasks
 
 from app import schemas
 from app.core import config
@@ -13,10 +12,7 @@ from app.api import deps
 from app.api.fastapi_permissions_utils import Permission
 
 
-
 router = APIRouter()
-
-templates = Jinja2Templates(directory="/app/app/templates")
 
 
 def write_file_to_local(form, file, settings):
@@ -52,11 +48,6 @@ async def upload_files(
     record_list = await asyncio.gather(*map(copy_file, files))
     records = schemas.UploadRecords(records=record_list)
     return records
-
-
-#@router.get("/", response_class=HTMLResponse)
-#async def upload_page(request: Request, current_user: schemas.User = Security(deps.get_current_active_user, scopes=['files:upload'])):
-#    return templates.TemplateResponse('upload.html', {'request': request})
 
 
 @router.get("/info")

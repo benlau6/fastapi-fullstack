@@ -2,7 +2,6 @@ from functools import lru_cache
 
 from fastapi import Header, HTTPException, Depends
 
-from app import schemas
 from app.core import config
 from app.core.config import settings # immutable
 
@@ -16,9 +15,8 @@ def get_settings():
 def get_db(settings: config.Settings = Depends(get_settings)):
     return None
 
+    
 ##################################
-
-
 # could be used for fine-grained control
 async def verify_content_length(content_length: int = Header(...)):
     if content_length > settings.PAYLOAD_LIMIT:
@@ -35,6 +33,7 @@ async def verify_key(x_api_key: str = Header(...)):
     if x_api_key != "key":
         raise HTTPException(status_code=400, detail="X-Api-Key header invalid")
 
+
 ############ fastapi-users #############
 from app.api.fastapi_users_utils import (
     get_current_user, 
@@ -42,6 +41,7 @@ from app.api.fastapi_users_utils import (
     get_current_active_verified_user,
     get_current_active_superuser,
 )
+
 
 ########### fastapi-permission #########
 from app.api.fastapi_permissions_utils import Permission

@@ -5,7 +5,12 @@
 ### To build all the containers with log shown
 ```
 git pull https://github.com/benlau6/fastapi-crud-users-permission.git
+# single server
 docker-compose down ; docker-compose up --build
+# multiple
+docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+# run in backend
+docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 ```
 
 ### Check api status
