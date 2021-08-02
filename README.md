@@ -15,7 +15,8 @@ Some fastapi third party libraries are selected because they earned many stars, 
 
 You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
 
-You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS (or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
+You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS \
+(or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
 
 ## Setup
 Reminders: All project development, testing, and deployment are done in windows10/11. docker-compose.yml may need to be changed for linux/mac environment
@@ -39,7 +40,8 @@ docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.pro
 docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 ```
 ### Check api status
-Browse http://api.docker.localhost/api/status \
+Browse http://api.docker.localhost/api/status
+
 The following response should be shown:
 ```
 {"status":"OK"}
