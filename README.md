@@ -11,12 +11,10 @@ It is a api backend project template built on top of
 6. [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
 </ul>
 
-\
 Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. Many new features may be added in without any efforts. But the most of the features you may use can acutally be rebuilt with some efforts. So for educational purpose or production, to know what has been done, to earn full control or to develop customized features, I recommend to build from scratch with FastAPI. 
-\
+
 You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
 
-\
 You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS (or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
 
 ## Setup
