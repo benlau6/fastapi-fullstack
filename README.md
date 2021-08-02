@@ -16,12 +16,12 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 * [fastapi-users](https://github.com/frankie567/fastapi-users) ([doc](https://frankie567.github.io/fastapi-users/)) for comprehensive user model.
 * [fastapi-permission](https://github.com/holgi/fastapi-permissions) ([doc](https://github.com/holgi/fastapi-permissions/blob/master/README.md)) for row-based security control.
 * [fastapi-crudrouter](https://github.com/awtkns/fastapi-crudrouter) ([doc](https://fastapi-crudrouter.awtkns.com/)) for quick crud development.
-* [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
 * [tortoise-orm](https://github.com/tortoise/tortoise-orm) ([doc](https://tortoise-orm.readthedocs.io/en/latest/)) for database orm, you can switch to any other orms for new features without any problems. However, if you want to switch it for features in use, e.g. fastapi-users and fastapi-permission. Re-configuration of pytest is needed.
 * [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
+* [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
 
 ### Notes
-Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. Many new features may be added in without any efforts. But the most of the features you may use can acutally be rebuilt with some efforts. So for educational purpose or production, to know what has been done, to earn full control or to develop customized features, I recommend to build from scratch with FastAPI. 
+Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. Many new features may be added in without any efforts. But the most of the features you may use can acutally be rebuilt with some efforts. So if for educational purpose, to know what has been done, I recommend to build from scratch with only FastAPI. 
 
 You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
 

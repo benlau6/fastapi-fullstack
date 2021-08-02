@@ -14,14 +14,6 @@ async def test_read_api_status(
     r = await client.get(f'{settings.ROOT_STR}/status')
     assert r.status_code == 200
     assert r.json() == {'status': 'OK'}
-
-##curl -H 'Host: api.docker.localhost' http://host.docker.internal/api/status
-def test_read_api_status_without_fastapi(headers):
-    r = requests.get('http://host.docker.internal/api/status', headers=headers)
-    assert r.status_code == 200
-    assert r.json() == {
-        'status': 'OK'
-    }
     
 
 def test_read_api_status_without_fastapi_with_localhost_port():
