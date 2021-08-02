@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   api:
-    build: .
+    build: ./app
     # for direct entry: 127.0.0.1:3000
     command:
       - /start-reload.sh # for dev
@@ -9,7 +9,8 @@ services:
       - 3000:3000
     volumes:
       - ./app:/app/app # for dev
-      - ./data/api:/data/fastapi # for dev
+      - ./data/files:/data/files # for dev
+      - ./data/db:/data/db # for dev
     environment: 
       # check for env: https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
       - PORT=3000
@@ -21,7 +22,7 @@ services:
       - traefik.http.services.app.loadbalancer.server.port=3000
       # Make Traefik use this domain in HTTP
       - traefik.http.routers.api.entrypoints=http
-      - traefik.http.routers.api.rule=Host(`api.docker.localhost`) && PathPrefix(`/api`)
+      - traefik.http.routers.api.rule=Host(`api.docker.localhost`) #&& PathPrefix(`/api`)
       - traefik.http.middlewares.stripprefix.stripprefix.prefixes=/api
       # Sets the maximum request body to 200MB
       - traefik.http.middlewares.sizelimit.buffering.maxRequestBodyBytes=200000000

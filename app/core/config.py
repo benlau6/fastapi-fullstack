@@ -7,13 +7,14 @@ from pydantic import BaseSettings
 # env will be read in case-insensitive way by pydantic BaseSettings
 # equal assignment assigns default value if there is no that env attribute
 class Settings(BaseSettings):
-    ########## path ###########
-    FILE_ROOT_PATH: str = '/data/fastapi/'
+    ########## Server path config ###########
+    FILE_ROOT_PATH: str = '/data/files/'
+    DATABASE_URL: str = "sqlite:///data/db/dev.db"
+    ########## API path #############
     ROOT_STR: str = '/api'
     API_V1_STR: str = '/v1'
     GRAPHQL_STR: str = '/graphql'
     TOKEN_RESOURCE_STR: str = '/auth/jwt/login'
-    DATABASE_URL: str = "sqlite:///data/fastapi/dev.db"
     ################################
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days

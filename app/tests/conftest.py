@@ -22,8 +22,8 @@ from app.api.deps import Permission
 from app.api.fastapi_users_utils import fastapi_users_instance
 
 test_api_root_str = ''
-test_root_path = '/data/fastapi'
-test_database_url = 'sqlite:///data/fastapi/test.db'
+test_root_path = '/data/files'
+test_database_url = 'sqlite:///data/db/test.db'
 test_config = config.Settings(DATABASE_URL=test_database_url, ROOT_STR=test_api_root_str, FILE_ROOT_PATH=test_root_path)
 
 
