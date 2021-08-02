@@ -9,7 +9,7 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 * [X] ORM support 
 * [X] JWT and cookie authentication backends
 * [X] Automatic OpenAPI documentation
-* [X] Well tested
+* [X] Test Automation
 
 ### Thanks to
 * [fastapi](https://github.com/tiangolo/fastapi) ([doc](https://fastapi.tiangolo.com/)) for one of the best api framework in python. Don't skip the doc if you just knew it. It is perfectly written.
