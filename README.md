@@ -19,7 +19,7 @@ You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/ben
 (or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
 
 ## Setup
-Reminders: All project development, testing, and deployment are done in windows10/11. docker-compose.yml may need to be changed for linux/mac environment
+Reminder: All project development, testing, and deployment are done in windows10/11. docker-compose.yml may need to be changed for linux/mac environment
 
 ### To build and run the container
 #### get to the workdir
@@ -59,6 +59,7 @@ pytest
 ```
 
 ## Documentation
+Reminder: You should keep the container running
 ### Runnable doc
 Browse http://api.docker.localhost/api/docs
 
