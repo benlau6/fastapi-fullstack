@@ -93,6 +93,7 @@ docker rmi $(docker images -f “dangling=true” -q)
 
 ## Reminder
 ### frontend project is in development, don't use it directly.
+Using [amis](https://github.com/baidu/amis) ([doc](https://baidu.github.io/amis))
 
 ## Archive
 
