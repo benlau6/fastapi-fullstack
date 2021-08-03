@@ -105,9 +105,9 @@ Browse http://127.0.0.1/status
 Browse http://127.0.0.1/login
 
 ## To do
-* [O] Page routing
-* [] Authorization
-* [] Application structure
+* Page routing
+* Authorization
+* Application structure
 
 ## Archive
 
