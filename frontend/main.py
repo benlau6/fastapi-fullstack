@@ -13,6 +13,8 @@ def create_app() -> FastAPI:
     app = FastAPI(root_path=settings.ROOT_STR)
 
     app.mount("/sdk", StaticFiles(directory="templates/sdk"), name="static")
+    app.mount("/pages", StaticFiles(directory="templates/pages"), name="static")
+    app.mount("/public", StaticFiles(directory="templates/public"), name="static")
 
     app.add_middleware(
         CORSMiddleware,
@@ -32,6 +34,14 @@ def create_app() -> FastAPI:
     @app.get("/login")
     async def login(request: Request):
         return templates.TemplateResponse("login.html", {"request": request})
+
+    #@app.get("/admin")
+    #async def index(request: Request):
+    #    return templates.TemplateResponse("admin.html", {"request": request})
+
+    @app.get("/")
+    async def index(request: Request):
+        return templates.TemplateResponse("index.html", {"request": request})
 
     return app
 

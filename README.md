@@ -91,6 +91,9 @@ ctrl+C
 docker rmi $(docker images -f “dangling=true” -q)
 ```
 
+## Reminder
+### frontend project is in development, don't use it directly.
+
 ## Archive
 
 ### For testing automation, not yet configured

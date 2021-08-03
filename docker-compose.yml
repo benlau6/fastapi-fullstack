@@ -55,6 +55,7 @@ services:
       # Enable the Dashboard and API
       #- --api
       - --api.insecure=true
+  # Don't use it if you are not gonna complete it. Only 10% are done and did not consider security.
   frontend:
     build: ./frontend
     # for direct entry: 127.0.0.1:3000
@@ -78,15 +79,3 @@ services:
       - traefik.http.routers.frontend.rule=Host(`127.0.0.1`)
     #networks:
     #  - backend
-#networks:
-#  backend:
-#    driver: bridge
-
-  #nginx:
-  #  image: nginx:alpine
-  #  ports:
-  #    - 80:80
-  #  volumes:
-  #    - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-  #  depends_on:
-  #    - api

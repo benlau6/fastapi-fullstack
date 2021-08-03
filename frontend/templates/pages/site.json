@@ -1,0 +1,72 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "pages": [
+      {
+        "label": "Home",
+        "url": "/",
+        "schema": {
+          "type": "page",
+          "title": "welcome",
+          "body": "welcome"
+        }
+      },
+      {
+        "children": [
+          {
+            "label": "User management",
+            "link": "/admin",
+            "icon": "fa fa-user",
+            "schemaApi": "get:/pages/admin.json"
+          },
+          {
+            "label": "List",
+            "url": "/crud",
+            "rewrite": "/crud/list",
+            "icon": "fa fa-table",
+            "children": [
+              {
+                "label": "List",
+                "url": "/crud/list",
+                "icon": "fa fa-list",
+                "schemaApi": "get:/pages/crud-list.json"
+              },
+              {
+                "label": "Create",
+                "url": "/crud/new",
+                "icon": "fa fa-plus",
+                "schemaApi": "get:/pages/crud-new.json"
+              },
+              {
+                "label": "Read",
+                "url": "/crud/:id",
+                "schemaApi": "get:/pages/crud-view.json"
+              },
+              {
+                "label": "Update",
+                "url": "/crud/:id/edit",
+                "schemaApi": "get:/pages/crud-edit.json"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "label example",
+        "children": [
+          {
+            "label": "External api",
+            "icon": "fa fa-link",
+            "schemaApi": "https://3xsw4ap8wah59.cfc-execute.bj.baidubce.com/api/amis-mock/mock2/service/form?tpl=tpl3"
+          },
+          {
+            "label": "External link",
+            "icon": "fa fa-github",
+            "link": "https://github.com/benlau6/fastapi-crud-users-permission"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+    "type": "page",
+    "title": "Admin",
+    "body": [
+        {
+            "label": "新增",
+            "type": "button",
+            "actionType": "dialog",
+            "level": "primary",
+            "className": "m-b-sm",
+            "dialog": {
+                "title": "新增表單",
+                "body": {
+                    "type": "form",
+                    "api": "post:http://127.0.0.1/api/v1/users",
+                    "controls": [
+                        {
+                            "type": "text",
+                            "name": "email",
+                            "label": "郵箱"
+                        },
+                        {
+                            "type": "text",
+                            "name": "password",
+                            "label": "密碼"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "crud",
+            "api": "http://127.0.0.1/api/v1/users",
+            "messages": {},
+            "initFetch": true,
+            "loadDataOnce": true,
+            "mode": "table",
+            "columns": [
+                {
+                    "name": "id",
+                    "label": "ID",
+                    "type": "text"
+                },
+                {
+                    "name": "email",
+                    "label": "郵箱",
+                    "type": "text"
+                },
+                {
+                    "type": "status",
+                    "name": "is_active",
+                    "label": "是否啟用",
+                    "map": [
+                        "fa fa-times text-danger",
+                        "fa fa-check text-success"
+                    ]
+                },
+                {
+                    "type": "operation",
+                    "label": "操作",
+                    "buttons": [
+                        {
+                            "label": "修改密碼",
+                            "type": "button",
+                            "actionType": "drawer",
+                            "drawer": {
+                                "title": "新增表單",
+                                "body": {
+                                    "type": "form",
+                                    "api": {
+                                        "method": "post",
+                                        "url": "http://127.0.0.1/api/v1/users/${id}",
+                                        "data": {
+                                            "new_pwd": "${new_pwd}"
+                                        }
+                                    },
+                                    "controls": [
+                                        {
+                                            "type": "text",
+                                            "name": "new_pwd",
+                                            "label": "修改密碼"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "label": "刪除",
+                            "type": "button",
+                            "actionType": "ajax",
+                            "level": "danger",
+                            "confirmText": "確認要刪除？",
+                            "api": "delete:http://127.0.0.1/api/v1/users/${id}",
+                            "visibleOn": "email != \"admin@gmail.com\""
+                        },
+                        {
+                            "label": "啟用/禁用",
+                            "type": "button",
+                            "actionType": "ajax",
+                            "level": "secondary",
+                            "api": "post:http://127.0.0.1/api/v1/users/${id}",
+                            "visibleOn": "email != \"admin@gmail.com\""
+                        }
+
+                    ]
+                }
+            ]
+        }
+    ],
+    "toolbar": [
+        {
+            "type": "dropdown-button",
+            "label": "${email}",
+            "buttons": [
+                {
+                    "type": "button",
+                    "label": "我的",
+                    "actionType": "dialog",
+                    "dialog": {
+                        "title": "系統提示",
+                        "body": "對你點擊了"
+                    }
+                },
+                {
+                    "type": "button",
+                    "label": "登出",
+                    "actionType": "ajax",
+                    "dialog": {
+                        "title": "系統提示",
+                        "body": "對你點擊了"
+                    },
+                    "api": {
+                        "method": "post",
+                        "url": "http://127.0.0.1/api/v1/auth/cookie/logout"
+                    },
+                    "redirect": "http://127.0.0.1/login"
+                }
+            ]
+        }
+    ],
+    "messages": {
+        "fetchSuccess": "登陸成功"
+    },
+    "initApi": "get:http://127.0.0.1/api/v1/users/me",
+    "initFetch": true
+}

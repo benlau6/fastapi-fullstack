@@ -1,0 +1,241 @@
+{
+  "type": "page",
+  "title": "基礎表單",
+  "subTitle": "展示一些常規的表單，包括驗證、提示等等",
+  "body": [
+    {
+      "type": "form",
+      "mode": "horizontal",
+      "title": "常規表單示例",
+      "affixFooter": true,
+      "api": "https://3xsw4ap8wah59.cfc-execute.bj.baidubce.com/api/amis-mock/form/save",
+      "actions": [
+        {
+          "label": "保存",
+          "type": "submit",
+          "level": "success"
+        }
+      ],
+      "controls": [
+        {
+          "label": " 標題",
+          "type": "text",
+          "placeholder": "請輸入標題",
+          "description": "請輸入一個能吸引眼球的標題",
+          "name": "title",
+          "size": "md"
+        },
+
+        {
+          "label": "編號",
+          "required": true,
+          "type": "text",
+          "placeholder": "請輸入編號",
+          "name": "b",
+          "size": "md",
+          "validations": {
+            "matchRegexp": "/^\\w{4}-\\w{4}-\\w{4}$/"
+          },
+          "validationErrors": {
+            "matchRegexp": "您輸入的內容格式不對，請按提示輸入！"
+          },
+          "hint": "輸入範例：xxxx-xxxx-xxxx"
+        },
+
+        {
+          "label": "置頂",
+          "type": "switch",
+          "name": "c",
+          "inline": true,
+          "labelRemark": "開啓後將置頂這條數據！"
+        },
+
+        {
+          "label": "活動時間",
+          "type": "date-range",
+          "name": "range",
+          "size": "md",
+          "remark": "這是一個字段時間範圍"
+        },
+
+        {
+          "label": "日期範圍",
+          "type": "group",
+          "controls": [
+            {
+              "type": "date",
+              "size": "md",
+              "name": "start",
+              "mode": "inline",
+              "maxDate": "${end}"
+            },
+
+            {
+              "label": "到",
+              "type": "date",
+              "size": "md",
+              "name": "end",
+              "inputClassName": "m-l-sm",
+              "mode": "inline",
+              "minDate": "${start}",
+              "remark": "這是兩個字段的時間範圍"
+            }
+          ]
+        },
+
+        {
+          "label": "瀏覽器",
+          "type": "button-group",
+          "name": "browser",
+          "value": "chrome",
+          "options": [
+            {
+              "label": "Chrome",
+              "value": "chrome"
+            },
+
+            {
+              "label": "火狐",
+              "value": "firefox"
+            },
+
+            {
+              "label": "IE",
+              "value": "ie"
+            }
+          ]
+        },
+
+        {
+          "type": "list",
+          "name": "taocan",
+          "label": "套餐選擇",
+          "options": [
+            {
+              "value": 1,
+              "body": "<div class='m-l-sm m-r-sm m-b-sm m-t-xs'>  <div class='text-md p-b-xs b-b m-b-xs'>套餐：C01</div>   <div class='text-sm'>CPU：2核</div> <div class='text-sm'>內存：1GB</div> <div class='text-sm'>SSD盤：10GB</div>  </div>"
+            },
+            {
+              "value": 2,
+              "body": "<div class='m-l-sm m-r-sm m-b-sm m-t-xs'>  <div class='text-md p-b-xs b-b m-b-xs'>套餐：C02</div>   <div class='text-sm'>CPU：4核</div> <div class='text-sm'>內存：4GB</div> <div class='text-sm'>SSD盤：20GB</div>  </div>"
+            },
+            {
+              "value": 3,
+              "disabled": true,
+              "body": "<div class='m-l-sm m-r-sm m-b-sm m-t-xs'>  <div class='text-md p-b-xs b-b m-b-xs'>套餐：C03</div>   <div class='text-sm'>CPU：8核</div> <div class='text-sm'>內存：8GB</div> <div class='text-sm'>SSD盤：50GB</div>  </div>"
+            }
+          ]
+        },
+
+        {
+          "label": "最愛周幾",
+          "type": "select",
+          "name": "select",
+          "size": "md",
+          "clearable": true,
+          "options": [
+            {
+              "label": "週一",
+              "value": "0"
+            },
+
+            {
+              "label": "週二",
+              "value": "1"
+            },
+
+            {
+              "label": "週三",
+              "value": "2"
+            },
+
+            {
+              "label": "週四",
+              "value": "3"
+            },
+
+            {
+              "label": "週五",
+              "value": "4"
+            },
+
+            {
+              "label": "週六",
+              "value": "5"
+            },
+
+            {
+              "label": "週日",
+              "value": "6"
+            }
+          ]
+        },
+
+        {
+          "label": "休息日",
+          "type": "list",
+          "name": "freeday",
+          "value": ["5", "6"],
+          "multiple": true,
+          "extractValue": true,
+          "options": [
+            {
+              "label": "週一",
+              "value": "0"
+            },
+
+            {
+              "label": "週二",
+              "value": "1"
+            },
+
+            {
+              "label": "週三",
+              "value": "2"
+            },
+
+            {
+              "label": "週四",
+              "value": "3"
+            },
+
+            {
+              "label": "週五",
+              "value": "4"
+            },
+
+            {
+              "label": "週六",
+              "value": "5"
+            },
+
+            {
+              "label": "週日",
+              "value": "6"
+            }
+          ]
+        },
+
+        {
+          "label": "人數",
+          "type": "number",
+          "name": "num",
+          "size": "md",
+          "value": 10
+        },
+
+        {
+          "label": "比率",
+          "type": "range",
+          "name": "percent"
+        },
+
+        {
+          "label": "簡介",
+          "type": "textarea",
+          "name": "textarea"
+        }
+      ]
+    }
+  ]
+}

@@ -10,9 +10,9 @@
     />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <link rel="stylesheet" href="sdk/sdk.css"/>
-    <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css -->
+    <!-- 從 1.1.0 開始 sdk.css 將不支持 IE 11，如果要支持 IE11 請引用這個 css -->
     <!-- <link rel="stylesheet" href="sdk-ie11.css" /> -->
-    <!-- 不过 amis 开发团队几乎没测试过 IE 11 下的效果，所以可能有不少功能用不了 -->
+    <!-- 不過 amis 開發團隊幾乎沒測試過 IE 11 下的效果，所以可能有不少功能用不了 -->
     <style>
         html,
         body,
@@ -32,53 +32,70 @@
 <script type="text/javascript">
     (function () {
         let amis = amisRequire('amis/embed');
-        // 通过替换下面这个配置来生成不同页面
+        let axios = amisRequire('axios');
+        // to avoid some apis having no response but only status code (by default amis needs data response)
+        // redirect to login if no permission
+        axios.interceptors.response.use(function (response) {
+            if(response.status >= 400 && response.status<500) {
+                top.location.href = '/login';            
+            }
+            if (response.data===null) {
+              response.data = {'something': 'dummy'}
+            }
+            return response;
+        }); 
+        // 通過替換下面這個配置來生成不同頁面
         let amisScoped = amis.embed('#root',
             {
-                "type": "form",
-                "title": "Account",
-                "controls": [
-                    {
-                        "label": "Email",
-                        "type": "text",
-                        "name": "username",
-                        "hint": "",
-                        "addOn": null,
-                        "required": true,
-                        "validations": {
-                            "isEmail": true
+                "type": "page",
+                    "body": {
+                    "type": "form",
+                    "title": "Account",
+                    "controls": [
+                        {
+                            "label": "Email",
+                            "type": "text",
+                            "name": "username",
+                            "hint": "",
+                            "addOn": null,
+                            "value": "admin@gmail.com",
+                            "required": true,
+                            "validations": {
+                                "isEmail": true
+                            },
+                            "validationErrors": {
+                                "isEmail": "Invalid email"
+                            }
                         },
-                        "validationErrors": {
-                            "isEmail": "Invalid email"
+                        {
+                            "type": "password",
+                            "label": "Password",
+                            "name": "password",
+                            "value": "password",
+                            "required": true
                         }
+                    ],
+                    "submitText": "Login",
+                    "affixFooter": false,
+                    "messages": {
+                        "fetchFailed": "Fetch failed",
+                        "saveSuccess": "Save success",
+                        "saveFailed": "Save failed",
+                        "validateFailed": ""
                     },
-                    {
-                        "type": "password",
-                        "label": "Password",
-                        "name": "password",
-                        "required": true
-                    }
-                ],
-                "submitText": "Login",
-                "affixFooter": false,
-                "messages": {
-                    "fetchFailed": "Fetch failed",
-                    "saveSuccess": "Save success",
-                    "saveFailed": "Save failed",
-                    "validateFailed": ""
-                },
-                "initApi": "",
-                "api": {
-                    "method": "post",
-                    "url": baseUrl + "/auth/cookie/login",
-                    "dataType": "form"
-                },
-                "debug": false,
-                "autoFocus": true,
-                "redirect": baseUrl
+                    "initApi": "",
+                    "api": {
+                        "method": "post",
+                        "url": baseUrl + "/auth/cookie/login",
+                        "dataType": "form"
+                    },
+                    "debug": false,
+                    "autoFocus": true,
+                    "redirect": '/'
+                }
             }
         );
-    })();
+    }());
 </script>
 </body>
 </html>
