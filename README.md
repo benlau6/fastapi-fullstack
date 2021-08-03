@@ -50,7 +50,7 @@ docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.pro
 docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 ```
 ### Check api status
-Browse http://api.docker.localhost/api/status
+Browse http://127.0.0.1/api/status
 
 The following response should be shown:
 ```
@@ -71,10 +71,10 @@ pytest
 ## Documentation
 Reminder: You should keep the container running
 ### Runnable doc
-Browse http://api.docker.localhost/api/docs
+Browse http://127.0.0.1/api/docs
 
 ### Printable doc
-Browse http://api.docker.localhost/api/redoc
+Browse http://127.0.0.1/api/redoc
 
 ## Clean up
 
@@ -91,9 +91,23 @@ ctrl+C
 docker rmi $(docker images -f “dangling=true” -q)
 ```
 
-## Reminder
-### frontend project is in development, don't use it directly.
-Using [amis](https://github.com/baidu/amis) ([doc](https://baidu.github.io/amis)) to minimize the effort and knowledge needed. (80% setup done by json)
+# Frontend (Only 10% done)
+## Reminder: Still in development, did not take security into concern, don't use it directly.
+Using [amis](https://github.com/baidu/amis) ([doc](https://baidu.github.io/amis)) to minimize the effort and knowledge needed. (80% setup could be done by json)
+
+## Setup
+Uncomment the frontend service in docker-compose, then just follow the setup in API part
+
+### Check status
+Browse http://127.0.0.1/status
+
+## Try it
+Browse http://127.0.0.1/login
+
+## To do
+* [O] Page routing
+* [] Authorization
+* [] Application structure
 
 ## Archive
 
