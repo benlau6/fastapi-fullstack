@@ -37,18 +37,28 @@ Reminder: All project development, testing, and deployment are done in windows10
 git pull https://github.com/benlau6/fastapi-crud-users-permission.git
 cd fastapi-crud-users-permission
 ```
+#### build the images
+```
+# it must be rerun if dockerfile / docker-compose.yml is changed
+docker-compose build
+```
 #### single server for dev/test (server auto restart after py code change)
 ```
-docker-compose down ; docker-compose up --build
+docker-compose up
 ```
 #### multiple servers for prod
 ```
-docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
-#### multiple servers running in backend
+#### run in backend
 ```
-docker-compose down ; docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+docker-compose up -d
 ```
+#### shortcut for develpment
+```
+docker-compose down; docker-compose up --build
+```
+
 ### Check api status
 Browse http://127.0.0.1/api/status
 
@@ -94,22 +104,147 @@ docker rmi $(docker images -f “dangling=true” -q)
 #
 
 # Frontend (Only 10% done)
-## Reminder: Still in development, did not take security into concern, don't use it directly.
-Using [amis](https://github.com/baidu/amis) ([doc](https://baidu.github.io/amis)) to minimize the effort and knowledge needed. (80% setup could be done by json)
+Using [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([preview](https://panjiachen.github.io/vue-element-admin))
 
 ## Setup
-Uncomment the frontend service in docker-compose, then just follow the setup in API part
+Keep the containers running, then run codes below:
+```
+# git pull https://github.com/benlau6/fastapi-crud-users-permission.git
+# cd fastapi-crud-users-permission
+cd frontend
+npm install
+npm run dev
+```
 
-### Check status
-Browse http://127.0.0.1/status
-
-## Try it
-Browse http://127.0.0.1/login
+### Try it
+Browse http://127.0.0.1:9528/
 
 ## To do
-* Page routing
-* Authorization
-* Application structure
+* [ ] connect to all the endpoints
+* [ ] make some demos
+
+## Q&A
+1. Q: set-cookies not working? 
+
+A1: src/utils/auth.js -> set **const TokenKey = 'fastapiusersauth'**
+
+A2: src/utils/requests.js -> axios set **withCredentials: true**
+```
+const service = axios.create({
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  withCredentials: true, // send cookies when cross-domain requests
+  timeout: 5000 // request timeout
+})
+```
+
+A3: (fastapi) api/fastapi_users_utils.py -> set **CookieAuthentication(..., cookie_samesite='None')**
+
+
+
+2. Q: jwt auth not working? \
+
+A. src/utils/requests.js -> request interceptor set **config.headers['Authorization'] = 'Bearer ' + getToken()**
+```
+service.interceptors.request.use(
+...
+    if (store.getters.token) {
+      // let each request carry token
+      // ['X-Token'] is a custom headers key
+      // please modify it according to the actual situation
+      config.headers['Authorization'] = 'Bearer ' + getToken()
+    }
+    return config
+  },
+...
+```
+
+3. Q: Backend response format not matching?
+
+A. src/utils/requests.js -> response interceptor set **const res = {...}**
+```
+service.interceptors.response.use(
+...
+  response => {
+    const hasData = response.data != null
+    const hasDetail = hasData ? response.data.detail != null : false
+    const res = {
+      'code': response.status,
+      'data': hasData ? response.data : null,
+      'message': hasDetail ? response.data.detail : null
+    }
+...
+```
+
+A.alt (fastapi) app/main.py -> add middleware to handle response
+```
+# it formatted response, but openapi crashed
+import json
+class async_iterator_wrapper:
+    def __init__(self, obj):
+        self._it = iter(obj)
+    def __aiter__(self):
+        return self
+    async def __anext__(self):
+        try:
+            value = next(self._it)
+        except StopIteration:
+            raise StopAsyncIteration
+        return value
+
+
+@app.middleware("http")
+async def format_output_for_frontend(request: Request, call_next):
+    response = await call_next(request)
+    
+    res_body = [x async for x in response.__dict__['body_iterator']]
+    
+    try:
+        if 200 <= response.status_code < 300:
+            status = True
+        else:
+            status = False
+
+        res_body_json = res_body[0]
+        res_body_data = json.loads(res_body_json)
+        if res_body_data is not None:
+            msg = res_body_data.pop('detail', None)
+            data = dict(res_body_data)
+        else:
+            msg = None
+            data = None
+
+        res_body_data = {
+            'status': status,
+            'msg': msg,
+            'data': data,
+        }
+        res_body_json = json.dumps(res_body_data)
+        res_body = [res_body_json.encode()]
+        response.headers['content-length'] = str(len(res_body_json))
+    except:
+        pass
+    
+    response.__setattr__('body_iterator', async_iterator_wrapper(res_body))
+    
+    return response
+```
+
+4. Q: permission not stated as 'roles' in response body?
+
+A. ctrl+f to find 'roles', replace some of them carefully
+
+
+
+## Reference
+1. Authentication
+  1. [jwt auth](https://segmentfault.com/a/1190000023185139)
+2. Nginx
+  1. [Is Nginx used and working?](https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/401)
+3. Cookie
+  1. [What is cookie?](https://shubo.io/cookies/)
+4. Tutorial
+  1. [hands on experience in vue-admin](https://juejin.cn/post/6844903840626507784)
+  2. [conclusion in vue-element-admin](https://www.gushiciku.cn/pl/pw8i/zh-tw)
 
 ## Archive
 

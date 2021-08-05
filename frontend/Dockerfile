@@ -1,10 +1,10 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+FROM node
 
-WORKDIR /app/app
+WORKDIR /app
 
-COPY ./requirements.txt requirements.txt
+COPY ./package.json .
 
-RUN pip install --upgrade pip
+RUN npm install
 
-RUN pip install -r requirements.txt 
+RUN npm run dev
 

@@ -1,14 +1,14 @@
 version: '3.8'
 services:
   api:
-    build: ./app
+    build: ./backend
     # for direct entry: 127.0.0.1:3000
     command:
       - /start-reload.sh # for dev
     ports:
       - 3000:3000
     volumes:
-      - ./app:/app/app # for dev
+      - ./backend:/app # for dev
       - ./data/files:/data/files # for dev
       - ./data/db:/data/db # for dev
     environment: 
@@ -56,26 +56,20 @@ services:
       #- --api
       - --api.insecure=true
   # Don't use it if you are not gonna complete it. Only 10% are done and did not consider security.
-  frontend:
-    build: ./frontend
-    # for direct entry: 127.0.0.1:3000
-    command:
-      - /start-reload.sh # for dev
-    ports:
-      - 5000:5000
-    volumes:
-      - ./frontend:/app/app # for dev
-    environment: 
-      # check for env: https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
-      - PORT=5000
-      - LOG_LEVEL=debug
-    labels:
-      # Enable Traefik for this specific "backend" service
-      - traefik.enable=true
-      # Define the port inside of the Docker service to use (shd be same as env:PORT)
-      - traefik.http.services.frontend.loadbalancer.server.port=5000
-      # Make Traefik use this domain in HTTP
-      - traefik.http.routers.frontend.entrypoints=http
-      - traefik.http.routers.frontend.rule=Host(`127.0.0.1`)
-    #networks:
-    #  - backend
+#  frontend:
+#    build: ./frontend
+#    # for direct entry: 127.0.0.1:3000
+#    ports:
+#      - 9528:9528
+#    volumes:
+#      - ./frontend:/app # for dev
+#    labels:
+#      # Enable Traefik for this specific "backend" service
+#      - traefik.enable=true
+#      # Define the port inside of the Docker service to use (shd be same as env:PORT)
+#      - traefik.http.services.frontend.loadbalancer.server.port=9528
+#      # Make Traefik use this domain in HTTP
+#      - traefik.http.routers.frontend.entrypoints=http
+#      - traefik.http.routers.frontend.rule=Host(`127.0.0.1`)
+#    #networks:
+#    #  - backend
