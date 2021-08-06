@@ -17,14 +17,6 @@ def create_app() -> FastAPI:
                 'url': 'http://127.0.0.1/api/v1/docs'
             }
         },
-        {
-            'name': 'v2',
-            "description": "API version 2, check link on the right",
-            'externalDocs': {
-                'description': 'sub-docs',
-                'url': 'http://127.0.0.1/api/v2/docs'
-            }
-        },
     ]
     
     app = FastAPI(root_path=settings.ROOT_STR, openapi_tags=tags_metadata)
