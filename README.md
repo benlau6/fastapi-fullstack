@@ -125,25 +125,13 @@ Keep the containers running, then run codes below:
 ```
 # git pull https://github.com/benlau6/fastapi-crud-users-permission.git
 # cd fastapi-crud-users-permission
-# docker-compose up
+# docker-compose up --build
 cd frontend/app
 npm install
 npm run dev
 ```
 ### prod
-#### Have internet access 
-```
-# git pull https://github.com/benlau6/fastapi-crud-users-permission.git
-# cd fastapi-crud-users-permission
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
-```
-
-#### No internet access
-```
-# git pull https://github.com/benlau6/fastapi-crud-users-permission.git
-# cd fastapi-crud-users-permission
-docker-compose -f docker-compose.yml -f docker-compose.prod.offline.yml up
-```
+Check setup for backend
 
 ### Try it
 Browse http://127.0.0.1:9528 for dev
@@ -166,8 +154,6 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 ```
-
-
 
 2. Q: jwt auth not working? \
 A. src/utils/requests.js -> request interceptor set **config.headers['Authorization'] = 'Bearer ' + getToken()**
