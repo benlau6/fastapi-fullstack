@@ -22,7 +22,9 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 * [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
 
 ### Notes
-Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. Many new features may be added in without any efforts. But the most of the features you may use can acutally be rebuilt with some efforts. So if for educational purpose, to know what has been done, I recommend to build from scratch with only FastAPI. 
+Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
+Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
+So if for educational purpose, to know what had been done, or for full control in workflow, to set what should be done, I recommend to build from scratch with only FastAPI. 
 
 You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
 
@@ -155,7 +157,8 @@ Browse http://127.0.0.1 for prod
 ## Q&A
 1. Q: set-cookies not working? \
 A1: src/utils/auth.js -> set **const TokenKey = 'fastapiusersauth'** \
-A2: src/utils/requests.js -> axios set **withCredentials: true** \
+A2.1: (fastapi) api/fastapi_users_utils.py -> set **CookieAuthentication(..., cookie_samesite='None')** \
+A2.2: src/utils/requests.js -> axios set **withCredentials: true** 
 ```
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -163,7 +166,6 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 ```
-A3: (fastapi) api/fastapi_users_utils.py -> set **CookieAuthentication(..., cookie_samesite='None')**
 
 
 
@@ -184,7 +186,7 @@ service.interceptors.request.use(
 ```
 
 3. Q: Backend response format not matching? \
-A. src/utils/requests.js -> response interceptor set **const res = {...}** \
+A. src/utils/requests.js -> response interceptor set **const res = {...}** 
 ```
 service.interceptors.response.use(
 ...
@@ -198,7 +200,7 @@ service.interceptors.response.use(
     }
 ...
 ```
-A.alt (fastapi) app/main.py -> add middleware to handle response
+  A.alt (fastapi) app/main.py -> add middleware to handle response
 ```
 # it formatted response, but openapi crashed
 import json
@@ -273,7 +275,7 @@ A. ctrl+f to find 'roles', replace some of them carefully
   - [full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql/tree/master/%7B%7Bcookiecutter.project_slug%7D%7D/frontend)
   - [dispatch](https://github.com/Netflix/dispatch)
 - Docker-compose
-  1. [Overriding](https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
+  - [Overriding](https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
 
 
 ## Archive
