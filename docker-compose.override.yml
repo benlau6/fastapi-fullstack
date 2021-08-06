@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  api:
+    command:
+      - /start-reload.sh # for dev
+    volumes:
+      - ./backend/app:/app # for dev

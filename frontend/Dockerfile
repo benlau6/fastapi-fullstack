@@ -1,15 +1,12 @@
-
-
 # Stage 0, "build-stage", based on Node.js, to build and compile the frontend
 FROM node as builder
 
 WORKDIR /app
 
-######## to reduce npm install time ########
+# to reduce npm install time
 COPY ./app/package*.json .
 
 RUN npm install
-############################################
 
 COPY ./app /app
 

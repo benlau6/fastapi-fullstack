@@ -8,6 +8,7 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 * [X] Authorization per user, per row, per route
 * [X] ORM support 
 * [X] JWT and cookie authentication backends
+* [X] Quick CRUD endpoints creation
 * [X] Automatic OpenAPI documentation
 * [X] Test Automation
 
@@ -29,7 +30,7 @@ You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/ben
 (or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
 
 ## Setup
-Reminder: All project development, testing, and deployment are done in windows10/11. docker-compose.yml may need to be changed for linux/mac environment
+Reminder: All project development, testing, and deployment are done in windows10/11. docker-compose\*.yml may need to be changed for linux/mac environment
 
 ### To build and run the container
 #### get to the workdir
@@ -37,24 +38,34 @@ Reminder: All project development, testing, and deployment are done in windows10
 git pull https://github.com/benlau6/fastapi-crud-users-permission.git
 cd fastapi-crud-users-permission
 ```
-#### build the images
+#### Build the images
 ```
-# it must be rerun if dockerfile / docker-compose.yml is changed
+# it must be rerun if dockerfile / docker-compose.yml is changed (e.g. dev -> prod, code changes)
 docker-compose build
+# or
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+
+```
+#### Load built images for offline production
+```
+# docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+docker save -o fastapi-crud-users-permission.tar fastapi-crud-users-permission_api fastapi-crud-users-permission_frontend traefik
+# send the .tar to offline server
+docker load -i fastapi-crud-users-permission.tar
 ```
 #### single server for dev/test (server auto restart after py code change)
 ```
 docker-compose up
 ```
-#### multiple servers for prod
+#### Multiple servers for prod
 ```
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
-#### run in backend
+#### Run in backend
 ```
 docker-compose up -d
 ```
-#### shortcut for develpment
+#### Shortcut for develpment
 ```
 docker-compose down; docker-compose up --build
 ```
@@ -74,7 +85,7 @@ docker exec -it fastapi-crud-users-permission_api_1 /bin/bash
 
 ### To test everything
 ```
-# Must be in the api container
+# docker exec -it fastapi-crud-users-permission_api_1 /bin/bash
 pytest
 ```
 
@@ -103,32 +114,48 @@ docker rmi $(docker images -f “dangling=true” -q)
 
 #
 
-# Frontend (Only 10% done)
+# Frontend (Only 30% done)
 Using [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([preview](https://panjiachen.github.io/vue-element-admin))
 
 ## Setup
+### dev
 Keep the containers running, then run codes below:
 ```
 # git pull https://github.com/benlau6/fastapi-crud-users-permission.git
 # cd fastapi-crud-users-permission
-cd frontend
+# docker-compose up
+cd frontend/app
 npm install
 npm run dev
 ```
+### prod
+#### Have internet access 
+```
+# git pull https://github.com/benlau6/fastapi-crud-users-permission.git
+# cd fastapi-crud-users-permission
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+```
+
+#### No internet access
+```
+# git pull https://github.com/benlau6/fastapi-crud-users-permission.git
+# cd fastapi-crud-users-permission
+docker-compose -f docker-compose.yml -f docker-compose.prod.offline.yml up
+```
 
 ### Try it
-Browse http://127.0.0.1:9528/
+Browse http://127.0.0.1:9528 for dev
+
+Browse http://127.0.0.1 for prod
 
 ## To do
 * [ ] connect to all the endpoints
 * [ ] make some demos
 
 ## Q&A
-1. Q: set-cookies not working? 
-
-A1: src/utils/auth.js -> set **const TokenKey = 'fastapiusersauth'**
-
-A2: src/utils/requests.js -> axios set **withCredentials: true**
+1. Q: set-cookies not working? \
+A1: src/utils/auth.js -> set **const TokenKey = 'fastapiusersauth'** \
+A2: src/utils/requests.js -> axios set **withCredentials: true** \
 ```
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -136,13 +163,11 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 ```
-
 A3: (fastapi) api/fastapi_users_utils.py -> set **CookieAuthentication(..., cookie_samesite='None')**
 
 
 
 2. Q: jwt auth not working? \
-
 A. src/utils/requests.js -> request interceptor set **config.headers['Authorization'] = 'Bearer ' + getToken()**
 ```
 service.interceptors.request.use(
@@ -158,9 +183,8 @@ service.interceptors.request.use(
 ...
 ```
 
-3. Q: Backend response format not matching?
-
-A. src/utils/requests.js -> response interceptor set **const res = {...}**
+3. Q: Backend response format not matching? \
+A. src/utils/requests.js -> response interceptor set **const res = {...}** \
 ```
 service.interceptors.response.use(
 ...
@@ -174,7 +198,6 @@ service.interceptors.response.use(
     }
 ...
 ```
-
 A.alt (fastapi) app/main.py -> add middleware to handle response
 ```
 # it formatted response, but openapi crashed
@@ -229,27 +252,28 @@ async def format_output_for_frontend(request: Request, call_next):
     return response
 ```
 
-4. Q: permission not stated as 'roles' in response body?
-
+4. Q: permission not stated as 'roles' in response body? \
 A. ctrl+f to find 'roles', replace some of them carefully
 
 
 
 ## Reference
-1. Authentication
-  1. [jwt auth](https://segmentfault.com/a/1190000023185139)
-2. Nginx
-  1. [Is Nginx used and working?](https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/401)
-  2. [构建发布docker](https://github.com/PanJiaChen/vue-element-admin/issues/592)
-  3. [如何使用 docker 部署前端项目](https://shanyue.tech/frontend-engineering/docker.html)
-3. Cookie
-  1. [What is cookie?](https://shubo.io/cookies/)
-4. Tutorial
-  1. [hands on experience in vue-admin](https://juejin.cn/post/6844903840626507784)
-  2. [conclusion in vue-element-admin](https://www.gushiciku.cn/pl/pw8i/zh-tw)
-5. Project structure
-  1. [full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql/tree/master/%7B%7Bcookiecutter.project_slug%7D%7D/frontend)
-  2. [dispatch](https://github.com/Netflix/dispatch)
+- Authentication
+  - [jwt auth](https://segmentfault.com/a/1190000023185139)
+- Nginx
+  - [Is Nginx used and working?](https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/401)
+  - [构建发布docker](https://github.com/PanJiaChen/vue-element-admin/issues/592)
+  - [如何使用 docker 部署前端项目](https://shanyue.tech/frontend-engineering/docker.html)
+- Cookie
+  - [What is cookie?](https://shubo.io/cookies/)
+- Tutorial
+  - [hands on experience in vue-admin](https://juejin.cn/post/6844903840626507784)
+  - [conclusion in vue-element-admin](https://www.gushiciku.cn/pl/pw8i/zh-tw)
+- Project structure
+  - [full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql/tree/master/%7B%7Bcookiecutter.project_slug%7D%7D/frontend)
+  - [dispatch](https://github.com/Netflix/dispatch)
+- Docker-compose
+  1. [Overriding](https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
 
 
 ## Archive

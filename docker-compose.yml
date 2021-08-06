@@ -8,7 +8,6 @@ services:
       - 8080:8080
     networks:
       - backend
-      - frontend
     volumes:
       # Add Docker as a mounted volume, so that Traefik can read the labels of other services
       - /var/run/docker.sock:/var/run/docker.sock
@@ -29,14 +28,11 @@ services:
   api:
     build: ./backend
     # for direct entry: 127.0.0.1:3000
-    command:
-      - /start-reload.sh # for dev
     ports:
       - 3000
     volumes:
-      - ./backend/app:/app # for dev
-      - ./data/files:/data/files # for dev
-      - ./data/db:/data/db # for dev
+      - ./data/files:/data/files
+      - ./data/db:/data/db 
     environment: 
       # check for env: https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
       - PORT=3000
@@ -56,25 +52,5 @@ services:
       - traefik.http.routers.api.middlewares=stripprefix@docker,sizelimit@docker
     networks:
       - backend
-#  frontend:
-#    build: 
-#        context: ./frontend
-#        # if u can connect to the internet
-#        #dockerfile: Dockerfile
-#        # if u cannot connect to the internet
-#        dockerfile: Dockerfile.offline
-#    ports:
-#      - 9528
-#    labels:
-#      # Enable Traefik for this specific "backend" service
-#      - traefik.enable=true
-#      # Define the port inside of the Docker service to use (shd be same as env:PORT)
-#      - traefik.http.services.frontend.loadbalancer.server.port=9528
-#      # Make Traefik use this domain in HTTP
-#      - traefik.http.routers.frontend.entrypoints=http
-#      - traefik.http.routers.frontend.rule=Host(`127.0.0.1`)
-#    networks:
-#      - frontend
 networks:
-  frontend:
   backend:
