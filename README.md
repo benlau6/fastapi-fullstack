@@ -243,6 +243,9 @@ async def format_output_for_frontend(request: Request, call_next):
 4. Q: permission not stated as 'roles' in response body? \
 A. ctrl+f to find 'roles', replace some of them carefully
 
+5. Q: app/prestart.sh not found? \
+A. set **git config core.autocrlf false** before git add . if you are using windows
+
 
 
 ## Reference
