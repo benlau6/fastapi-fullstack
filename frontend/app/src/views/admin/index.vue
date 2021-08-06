@@ -46,7 +46,7 @@ export default {
       const statusMap = {
         // success as green, grey as blue, danger as red
         true: 'grey',
-        false: 'danger'
+        false: 'info'
       }
       return statusMap[status]
     }

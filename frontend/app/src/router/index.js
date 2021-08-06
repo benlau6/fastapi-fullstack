@@ -67,12 +67,6 @@ export const constantRoutes = [
         name: 'Table',
         component: () => import('@/views/table/index'),
         meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
       }
     ]
   },
@@ -99,12 +93,19 @@ export const asyncRoutes = [
   {
     path: '/admin',
     component: Layout,
+    meta: { title: 'Admin', icon: 'table' },
     children: [
       {
-        path: 'index',
-        name: 'Admin',
+        path: 'show',
+        name: 'Show',
         component: () => import('@/views/admin/index'),
-        meta: { title: 'Admin', icon: 'table' }
+        meta: { title: 'Show', icon: 'table' }
+      },
+      {
+        path: 'edit',
+        name: 'Edit',
+        component: () => import('@/views/admin/editable-table'),
+        meta: { title: 'Edit', icon: 'table' }
       }
     ]
   },

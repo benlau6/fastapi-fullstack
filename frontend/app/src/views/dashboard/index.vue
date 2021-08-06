@@ -1,7 +1,12 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-    <div class="dashboard-text">principals: <span v-for="principal in principals" :key="principal">{{ principal }}</span></div>
+    <div class="dashboard-text">Welcome {{ name }}</div>
+    <br>
+    <div class="dashboard-text">
+      permissions: [<br>
+      <ul v-for="principal in principals" :key="principal">{{ principal }}</ul>
+      ]
+    </div>
   </div>
 </template>
 

@@ -32,10 +32,25 @@ export function getUsers() {
   })
 }
 
-export function addUser(data) {
+export function createUser(data) {
   return request({
     url: '/users',
     method: 'post',
     data
+  })
+}
+
+export function updateUser(id, data) {
+  return request({
+    url: '/users/' + id,
+    method: 'patch',
+    data
+  })
+}
+
+export function deleteUser(id) {
+  return request({
+    url: '/users' + id,
+    method: 'delete'
   })
 }

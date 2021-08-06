@@ -13,7 +13,7 @@ async def test_created_user_exists(new_user):
 
 
 @pytest.mark.asyncio
-async def test_users_exists(client, settings):
-    r = await client.get(f'{settings.USERS_URL}')
+async def test_users_exists(client, settings, superuser_token_headers):
+    r = await client.get(f'{settings.USERS_URL}', headers=superuser_token_headers)
     all_users = r.json()
     assert len(all_users) >= 2

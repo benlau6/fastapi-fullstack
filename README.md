@@ -240,11 +240,17 @@ A. ctrl+f to find 'roles', replace some of them carefully
   1. [jwt auth](https://segmentfault.com/a/1190000023185139)
 2. Nginx
   1. [Is Nginx used and working?](https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/401)
+  2. [构建发布docker](https://github.com/PanJiaChen/vue-element-admin/issues/592)
+  3. [如何使用 docker 部署前端项目](https://shanyue.tech/frontend-engineering/docker.html)
 3. Cookie
   1. [What is cookie?](https://shubo.io/cookies/)
 4. Tutorial
   1. [hands on experience in vue-admin](https://juejin.cn/post/6844903840626507784)
   2. [conclusion in vue-element-admin](https://www.gushiciku.cn/pl/pw8i/zh-tw)
+5. Project structure
+  1. [full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql/tree/master/%7B%7Bcookiecutter.project_slug%7D%7D/frontend)
+  2. [dispatch](https://github.com/Netflix/dispatch)
+
 
 ## Archive
 

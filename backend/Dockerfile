@@ -2,9 +2,12 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
 WORKDIR /app
 
-COPY ./requirements.txt requirements.txt
+# dot means WORKDIR, could be replaced by /app
+COPY ./app/requirements.txt .
 
 RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt 
 
+# comment it out if mounted /backend as volume
+#COPY ./app /app

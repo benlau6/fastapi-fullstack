@@ -4,6 +4,7 @@ from typing import Type
 from app.core.config import settings
 import inspect
 
+
 def as_form(cls: Type[BaseModel]):
     new_params = []
     for field in cls.__fields__.values():
@@ -41,32 +42,3 @@ def as_form(cls: Type[BaseModel]):
     setattr(cls, 'as_form', _as_form)
 
     return cls
-
-
-#from bson.objectid import ObjectId
-#class PyObjectId(ObjectId):
-#    @classmethod
-#    def __get_validators__(cls):
-#        yield cls.validate
-#    @classmethod
-#    def validate(cls, v):
-#        if not ObjectId.is_valid(v):
-#            raise ValueError("Invalid objectid")
-#        return ObjectId(v)
-#    @classmethod
-#    def __modify_schema__(cls, field_schema):
-#        field_schema.update(type="string")
-
-#from pydantic import EmailStr
-# replaced by direct validator in schemas.user
-#class EmailProviderRestrictedStr(EmailStr):
-#    @classmethod
-#    def __get_validators__(cls):
-#        yield cls.validate
-#    @classmethod
-#    def validate(cls, v: EmailStr) -> EmailStr:
-#        # it cannot be changed by pytest or fastapi, but an .env
-#        if settings.EMAIL_PROVIDER_RESTRICTION:
-#            if not any(provider in v for provider in settings.ALLOWED_EMAIL_PROVIDER_LIST):
-#                raise ValueError("Invalid email provider")
-#        return super().validate(v)

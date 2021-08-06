@@ -4,4 +4,3 @@ from tortoise import fields
 
 class UserModel(TortoiseBaseUserModel):
     principals = fields.JSONField() 
-
