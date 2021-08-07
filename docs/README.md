@@ -1,46 +1,21 @@
 # fastapi-fullstack
 
-## Introduction
-A FastAPI project template with CRUD, authentication, authorization, documentation, testing, and frontend.
+## FastAPI backend
 
-### Features
-- [X] Authentication with registration, login, password reset and email verification 
-- [X] Authorization per user, per row, per route
-- [X] ORM support
-- [X] JWT and cookie authentication backends
-- [X] Quick CRUD endpoints creation
-- [X] Automatic OpenAPI documentation
-- [X] Test Automation
+### Setup
 
-### Thanks to
-- [fastapi](https://github.com/tiangolo/fastapi) ([doc](https://fastapi.tiangolo.com/)) for one of the best api framework in python. Don't skip the doc if you just knew it. It is perfectly written.
-- [fastapi-users](https://github.com/frankie567/fastapi-users) ([doc](https://frankie567.github.io/fastapi-users/)) for comprehensive user model.
-- [fastapi-permission](https://github.com/holgi/fastapi-permissions) ([doc](https://github.com/holgi/fastapi-permissions/blob/master/README.md)) for row-based security control.
-- [fastapi-crudrouter](https://github.com/awtkns/fastapi-crudrouter) ([doc](https://fastapi-crudrouter.awtkns.com/)) for quick crud development.
-- [tortoise-orm](https://github.com/tortoise/tortoise-orm) ([doc](https://tortoise-orm.readthedocs.io/en/latest/)) for database orm, you can switch to any other orms for new features without any problems. However, if you want to switch it for features in use, e.g. fastapi-users and fastapi-permission. Re-configuration of pytest is needed.
-- [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
-- [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
-
-### Notes
-Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
-Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
-So if for educational purpose, to know what had been done, or for full control in workflow, to set what should be done, I recommend to build from scratch with only FastAPI. 
-
-You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
-
-You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS \
-(or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
-
-## Setup
 Reminder: All project development, testing, and deployment are done in windows10/11. docker-compose\*.yml may need to be changed for linux/mac environment
 
-### To build and run the container
-#### get to the workdir
+#### To build and run the container
+
+##### Get to the workdir
+
 ```bash
 git pull https://github.com/benlau6/fastapi-fullstack.git
 cd fastapi-fullstack
 ```
-#### Build the images
+##### Build the images
+
 ```
 # it must be rerun if dockerfile / docker-compose.yml is changed (e.g. dev -> prod, code changes)
 docker-compose build
@@ -48,31 +23,41 @@ docker-compose build
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
 
 ```
-#### Load built images for offline production
+##### Load built images for offline production
+
 ```bash
 # docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
 docker save -o fastapi-fullstack.tar fastapi-fullstack_api fastapi-fullstack_frontend traefik
 # send the .tar to offline server
 docker load -i fastapi-fullstack.tar
 ```
-#### single server for dev/test (server auto restart after py code change)
+
+##### Single server for dev/test (server auto restart after py code change)
+
 ```bash
 docker-compose up
 ```
-#### Multiple servers for prod
+
+##### Multiple servers for prod
+
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
-#### Run in backend
+
+##### Run in backend
+
 ```bash
 docker-compose up -d
 ```
-#### Shortcut for develpment
+
+##### Shortcut for develpment
+
 ```bash
 docker-compose down; docker-compose up --build
 ```
 
-### Check api status
+#### Check api status
+
 Browse http://127.0.0.1/api/status
 
 The following response should be shown:
@@ -80,28 +65,35 @@ The following response should be shown:
 {"status":"OK"}
 ```
 
-### To get in the api container for dev / test
+#### To get in the api container for dev / test
+
 ```bash
 docker exec -it fastapi-fullstack_api_1 /bin/bash
 ```
 
-### To test everything
+#### To test everything
+
 ```bash
 # docker exec -it fastapi-fullstack_api_1 /bin/bash
 pytest
 ```
 
-## Documentation
+### Documentation
+
 Reminder: You should keep the container running
-### Runnable doc
+
+#### Runnable doc
+
 Browse http://127.0.0.1/api/docs
 
-### Printable doc
+#### Printable doc
+
 Browse http://127.0.0.1/api/redoc
 
-## Clean up
+### Clean up
 
-### Stop the instance
+#### Stop the instance
+
 ```bash
 # remove-orphans for removing removed services in docker-compose.yml
 docker-compose down --remove-orphans
@@ -109,18 +101,23 @@ docker-compose down --remove-orphans
 ctrl+C
 ```
 
-### Remove all <none> image
+#### Remove all <none> image
+
 ```bash
 docker rmi $(docker images -f “dangling=true” -q)
 ```
 
-#
+## vue-element-admin Frontend (only 30% done)
 
-# Frontend (Only 30% done)
-Using [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([preview](https://panjiachen.github.io/vue-element-admin))
+### To do
 
-## Setup
-### dev
+- [ ] connect to all the endpoints
+- [ ] make some demos
+
+### Setup
+
+#### dev
+
 Keep the containers running, then run codes below:
 ```bash
 # git pull https://github.com/benlau6/fastapi-fullstack.git
@@ -130,19 +127,18 @@ cd frontend/app
 npm install
 npm run dev
 ```
-### prod
+#### prod
+
 Check setup for backend
 
-### Try it
+#### Try it
+
 Browse http://127.0.0.1:9528 for dev
 
 Browse http://127.0.0.1 for prod
 
-## To do
-- [ ] connect to all the endpoints
-- [ ] make some demos
+### Q&A
 
-## Q&A
 - Set-cookies not working?
   - Solultion 1: src/utils/auth.js -> set **const TokenKey = 'fastapiusersauth'**
   - Solution 2:
@@ -170,7 +166,6 @@ Browse http://127.0.0.1 for prod
       },
     ...
     ```
-
 - Backend response format not matching?
   - Solution 1: src/utils/requests.js -> response interceptor set **const res = {...}** 
     ```python
@@ -190,6 +185,7 @@ Browse http://127.0.0.1 for prod
     ```python
     # it formatted response, but openapi crashed
     import json
+
     class async_iterator_wrapper:
         def __init__(self, obj):
             self._it = iter(obj)
@@ -201,7 +197,6 @@ Browse http://127.0.0.1 for prod
             except StopIteration:
                 raise StopAsyncIteration
             return value
-
 
     @app.middleware("http")
     async def format_output_for_frontend(request: Request, call_next):
@@ -239,33 +234,10 @@ Browse http://127.0.0.1 for prod
         
         return response
     ```
-
 - Permission not stated as 'roles' in response body?
   - ctrl+f to find 'roles', replace some of them carefully
-
 - app/prestart.sh not found?
   - set **git config core.autocrlf false** before using 'git add .' if you are using windows
-
-
-
-## Reference
-- Authentication
-  - [jwt auth](https://segmentfault.com/a/1190000023185139)
-- Nginx
-  - [Is Nginx used and working?](https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/401)
-  - [构建发布docker](https://github.com/PanJiaChen/vue-element-admin/issues/592)
-  - [如何使用 docker 部署前端项目](https://shanyue.tech/frontend-engineering/docker.html)
-- Cookie
-  - [What is cookie?](https://shubo.io/cookies/)
-- Tutorial
-  - [hands on experience in vue-admin](https://juejin.cn/post/6844903840626507784)
-  - [conclusion in vue-element-admin](https://www.gushiciku.cn/pl/pw8i/zh-tw)
-- Project structure
-  - [full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql/tree/master/%7B%7Bcookiecutter.project_slug%7D%7D/frontend)
-  - [dispatch](https://github.com/Netflix/dispatch)
-- Docker-compose
-  - [overriding](https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
-
 
 ## Archive
 

@@ -1,11 +1,13 @@
 # fastapi-fullstack
 
 ## Introduction
+
 A FastAPI project template with CRUD, authentication, authorization, documentation, testing, and frontend.
 
 [Documentation](https://benlau6.github.io/fastapi-fullstack)
 
-### Features
+## Features
+
 - [X] Authentication with registration, login, password reset and email verification 
 - [X] Authorization per user, per row, per route
 - [X] ORM support
@@ -15,7 +17,8 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 - [X] Test Automation
 - [X] Vue frontend
 
-### Thanks to
+## Thanks to
+
 - [fastapi](https://github.com/tiangolo/fastapi) ([doc](https://fastapi.tiangolo.com/)) for one of the best api framework in python. Don't skip the doc if you just knew it. It is perfectly written.
 - [fastapi-users](https://github.com/frankie567/fastapi-users) ([doc](https://frankie567.github.io/fastapi-users/)) for comprehensive user model.
 - [fastapi-permission](https://github.com/holgi/fastapi-permissions) ([doc](https://github.com/holgi/fastapi-permissions/blob/master/README.md)) for row-based security control.
@@ -26,6 +29,7 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin))
 
 ### Notes
+
 Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
 Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
 So if for educational purpose, to know what had been done, or for full control in workflow, to set what should be done, I recommend to build from scratch with only FastAPI. 
@@ -36,6 +40,7 @@ You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/ben
 (or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
 
 ## Reference
+
 - Authentication
   - [jwt auth](https://segmentfault.com/a/1190000023185139)
 - Nginx
