@@ -28,7 +28,7 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 - [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin))
 
-### Notes
+##### Notes
 
 Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
 Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
