@@ -115,7 +115,7 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
-        path: 'https://github.com/benlau6/fastapi-crud-users-permission',
+        path: 'https://github.com/benlau6/fastapi-fullstack',
         meta: { title: 'External Link', icon: 'link' }
       }
     ]

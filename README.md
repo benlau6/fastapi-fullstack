@@ -1,4 +1,4 @@
-# fastapi-crud-users-permission
+# fastapi-fullstack
 
 ## Introduction
 A FastAPI project template with CRUD, authentication, authorization, documentation, and testing.
@@ -37,8 +37,8 @@ Reminder: All project development, testing, and deployment are done in windows10
 ### To build and run the container
 #### get to the workdir
 ```
-git pull https://github.com/benlau6/fastapi-crud-users-permission.git
-cd fastapi-crud-users-permission
+git pull https://github.com/benlau6/fastapi-fullstack.git
+cd fastapi-fullstack
 ```
 #### Build the images
 ```
@@ -51,9 +51,9 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
 #### Load built images for offline production
 ```
 # docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
-docker save -o fastapi-crud-users-permission.tar fastapi-crud-users-permission_api fastapi-crud-users-permission_frontend traefik
+docker save -o fastapi-fullstack.tar fastapi-fullstack_api fastapi-fullstack_frontend traefik
 # send the .tar to offline server
-docker load -i fastapi-crud-users-permission.tar
+docker load -i fastapi-fullstack.tar
 ```
 #### single server for dev/test (server auto restart after py code change)
 ```
@@ -82,12 +82,12 @@ The following response should be shown:
 
 ### To get in the api container for dev / test
 ```
-docker exec -it fastapi-crud-users-permission_api_1 /bin/bash
+docker exec -it fastapi-fullstack_api_1 /bin/bash
 ```
 
 ### To test everything
 ```
-# docker exec -it fastapi-crud-users-permission_api_1 /bin/bash
+# docker exec -it fastapi-fullstack_api_1 /bin/bash
 pytest
 ```
 
@@ -123,8 +123,8 @@ Using [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc
 ### dev
 Keep the containers running, then run codes below:
 ```
-# git pull https://github.com/benlau6/fastapi-crud-users-permission.git
-# cd fastapi-crud-users-permission
+# git pull https://github.com/benlau6/fastapi-fullstack.git
+# cd fastapi-fullstack
 # docker-compose up --build
 cd frontend/app
 npm install
