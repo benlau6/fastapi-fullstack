@@ -12,7 +12,7 @@ English | [简体中文](./README-zh.md)
 ## Build Setup
 
 
-```bash
+``` bash
 # clone the project
 git clone https://github.com/PanJiaChen/vue-admin-template.git
 
@@ -30,7 +30,7 @@ This will automatically open http://localhost:9528
 
 ## Build
 
-```bash
+``` bash
 # build for test environment
 npm run build:stage
 
@@ -40,7 +40,7 @@ npm run build:prod
 
 ## Advanced
 
-```bash
+``` bash
 # preview the release environment effect
 npm run preview
 

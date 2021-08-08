@@ -1,4 +1,4 @@
-# fastapi-fullstack
+# Overview
 
 ## Introduction
 
@@ -25,19 +25,24 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 - [fastapi-crudrouter](https://github.com/awtkns/fastapi-crudrouter) ([doc](https://fastapi-crudrouter.awtkns.com/)) for quick crud development.
 - [tortoise-orm](https://github.com/tortoise/tortoise-orm) ([doc](https://tortoise-orm.readthedocs.io/en/latest/)) for database orm, you can switch to any other orms for new features without any problems. However, if you want to switch it for features in use, e.g. fastapi-users and fastapi-permission. Re-configuration of pytest is needed.
 - [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
-- [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
-- [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin))
+- [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing.
+- [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin)) for frontend template.
 
-##### Notes
+!!! Note
+    Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
+    Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
+    So if for educational purpose, to know what had been done, or for full control in workflow, to set what should be done, I recommend to build from scratch with only FastAPI. 
 
-Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
-Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
-So if for educational purpose, to know what had been done, or for full control in workflow, to set what should be done, I recommend to build from scratch with only FastAPI. 
+    You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
 
-You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
+    You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS \
+    (or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
 
-You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS \
-(or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
+## To do
+
+- Frontend
+    - [ ] connect to all the endpoints
+    - [ ] make some demos
 
 ## Reference
 
@@ -57,4 +62,3 @@ You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/ben
     - [dispatch](https://github.com/Netflix/dispatch)
 - Docker-compose
     - [overriding](https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
-

@@ -32,7 +32,7 @@
 
 ## Build Setup
 
-```bash
+``` bash
 # 克隆项目
 git clone https://github.com/PanJiaChen/vue-admin-template.git
 
@@ -53,7 +53,7 @@ npm run dev
 
 ## 发布
 
-```bash
+``` bash
 # 构建测试环境
 npm run build:stage
 
@@ -63,7 +63,7 @@ npm run build:prod
 
 ## 其它
 
-```bash
+``` bash
 # 预览发布环境效果
 npm run preview
 
