@@ -1,6 +1,9 @@
-# Setup
+# Deployment
 
-## dev
+!!! note
+    Node.js should be installed
+
+## Dev
 
 Keep the containers running, then run codes below:
 ``` bash
@@ -11,7 +14,7 @@ cd frontend/app
 npm install
 npm run dev
 ```
-## prod
+## Prod
 
 Check setup for backend
 

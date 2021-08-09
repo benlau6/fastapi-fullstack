@@ -1,6 +1,7 @@
 # API Docs
 
-Reminder: You should keep the container running
+!!! note
+    You should keep the container running
 
 ## Runnable doc
 

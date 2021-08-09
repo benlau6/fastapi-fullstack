@@ -104,6 +104,3 @@
 !!! question "Permission not stated as 'roles' in response body?"
 ??? solution
     ++ctrl+f++ to find 'roles', replace some of them carefully
-!!! question "app/prestart.sh not found?"
-??? solution
-    set **git config core.autocrlf false** before using 'git add .' if you are using windows
