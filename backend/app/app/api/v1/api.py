@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 from fastapi_crudrouter import MemoryCRUDRouter as CRUDRouter
-from fastapi_permissions import Allow, Deny, All, Authenticated
+from fastapi_permissions import Allow, Deny, All, Authenticated, Everyone
 
 from app import schemas
 from app.core.config import settings
