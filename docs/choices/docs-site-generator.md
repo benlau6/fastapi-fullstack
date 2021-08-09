@@ -38,17 +38,17 @@
 
 ## Docusaurus
 
-✔️ React based
+<sub>React based
 
-✔️ SPA
+✔️ Good for SPA, which designed for not only documentation
 
 ❌ Complicated setup
 
 ## VuePress
 
-✔️ Vue based
+<sub>Vue based
 
-✔️ SPA
+✔️ Good for SPA, which designed for not only documentation
 
 ❌ Complicated setup
 
