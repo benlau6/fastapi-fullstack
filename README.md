@@ -58,3 +58,6 @@ You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/ben
 - Docker-compose
     - [overriding](https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
 
+## License
+
+This project is licensed under the terms of the MIT license.
