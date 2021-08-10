@@ -1,33 +1,39 @@
-from typing import List, Optional, Any
+from typing import Optional
 
-import pydantic
-from fastapi_users import models
-from tortoise.contrib.pydantic import PydanticModel
-
-import app.models as app_models
+from pydantic import BaseModel, EmailStr
 
 
-class User(models.BaseUser):
-    principals: Optional[List[str]] = None
-
-    @pydantic.root_validator
-    def principals_set_config(cls, values):
-        principals = values.get('principals')
-        email = values.get('email')
-        if principals is None:
-            values["principals"] = ['user:' + email]
-        return values
+# Shared properties
+class UserBase(BaseModel):
+    email: Optional[EmailStr] = None
+    is_active: Optional[bool] = True
+    is_superuser: bool = False
+    full_name: Optional[str] = None
 
 
-class UserCreate(models.BaseUserCreate):
-    principals: Optional[List[str]] = None
+# Properties to receive via API on creation
+class UserCreate(UserBase):
+    email: EmailStr
+    password: str
 
 
-class UserUpdate(User, models.BaseUserUpdate):
+# Properties to receive via API on update
+class UserUpdate(UserBase):
+    password: Optional[str] = None
+
+
+class UserInDBBase(UserBase):
+    id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+# Additional properties to return via API
+class User(UserInDBBase):
     pass
 
 
-class UserInDB(User, models.BaseUserDB, PydanticModel):
-    class Config:
-        orm_mode = True
-        orig_model = app_models.UserModel
+# Additional properties stored in DB
+class UserInDB(UserInDBBase):
+    hashed_password: str

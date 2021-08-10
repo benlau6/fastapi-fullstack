@@ -45,13 +45,6 @@ def create_app() -> FastAPI:
 
 app = create_app()
 
-register_tortoise(
-    app,
-    db_url=settings.DATABASE_URL,
-    modules={"models": ["app.models"]},
-    generate_schemas=True,
-)
-
 
 # in case it is needed
 #@app.on_event('startup')

@@ -33,6 +33,10 @@ services:
     volumes:
       - ./data/files:/data/files
       - ./data/db:/data/db 
+    depends_on:
+      - db
+    env_file:
+      - .env
     environment: 
       # check for env: https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
       - PORT=3000
@@ -52,5 +56,33 @@ services:
       - traefik.http.routers.api.middlewares=stripprefix@docker,sizelimit@docker
     networks:
       - backend
+  db:
+    image: postgres:12
+    ports: 
+      - 5432
+    networks:
+      - backend
+    # check PGDATA section https://hub.docker.com/_/postgres for this weird sub-directory config
+    volumes:
+      - ./data/db:/var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 5050
+    networks:
+      - backend
+    depends_on:
+      - db
+    env_file:
+      - .env
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.pgadmin.loadbalancer.server.port=5050
+      - traefik.http.routers.pgadmin.entrypoints=http
+      - traefik.http.routers.pgadmin.rule=Host(`127.0.0.1`)
 networks:
   backend:

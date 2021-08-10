@@ -8,7 +8,7 @@ from fastapi.responses import StreamingResponse
 from app import schemas
 from app.core import config
 from app.api import deps
-from app.api.fastapi_permissions_utils import Permission
+from app.api.deps import Permission
 
 
 router = APIRouter()

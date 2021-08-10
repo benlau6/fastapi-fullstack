@@ -9,7 +9,7 @@ from fastapi import File, UploadFile, Depends, BackgroundTasks
 from app import schemas
 from app.core import config
 from app.api import deps
-from app.api.fastapi_permissions_utils import Permission
+from app.api.deps import Permission
 
 
 router = APIRouter()

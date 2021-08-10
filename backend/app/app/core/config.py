@@ -1,7 +1,8 @@
-from typing import List
+from typing import Any, Dict, List, Optional, Union
 import secrets
+import os
 
-from pydantic import BaseSettings
+from pydantic import BaseSettings, PostgresDsn, validator
 
 
 # env will be read in case-insensitive way by pydantic BaseSettings
@@ -9,7 +10,12 @@ from pydantic import BaseSettings
 class Settings(BaseSettings):
     ########## Server path config ###########
     FILE_ROOT_PATH: str = '/data/files/'
-    DATABASE_URL: str = "sqlite:///data/db/dev.db"
+    DATABASE_URI: str = 'sqlite+aiosqlite:///:memory:'
+    ########## POSTGRES
+    POSTGRES_SERVER: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str 
     ########## API path #############
     ROOT_STR: str = '/api'
     API_V1_STR: str = '/v1'
@@ -20,8 +26,9 @@ class Settings(BaseSettings):
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     ############# user init ##############
-    FIRST_SUPERUSER: str = 'admin@gmail.com'
-    FIRST_NORMAL_USER: str = 'user@gmail.com'
+    FIRST_SUPERUSER: str = 'admin@example.com'
+    FIRST_SUPERUSER_PASSWORD: str = 'password'
+    FIRST_NORMAL_USER: str = 'user@example.com'
     ############# limit #############
     PAYLOAD_LIMIT: int = 2000000
     #URL_DEFAULT_TTL=300
@@ -38,6 +45,10 @@ class Settings(BaseSettings):
     # it could read a env file
     #class Config:
     #    env_file = '.env'
+
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
 
     @property
     def AUTH_URL(self) -> str:

@@ -1,3 +1,4 @@
+alembic
 fastapi
 pydantic[email]
 python-multipart
@@ -12,8 +13,14 @@ requests
 fastapi-crudrouter
 fastapi-permissions
 fastapi-admin
-fastapi-users[tortoise-orm]
-aiosqlite
+#fastapi-users[sqlalchemy]
 asyncpg
 aiomysql
 asynctest
+SQLAlchemy
+passlib
+bcrypt
+aiosqlite
+python-jose
+psycopg2
+tenacity

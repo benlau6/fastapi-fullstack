@@ -1,29 +1,27 @@
-from tortoise import Tortoise
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import models, schemas
+from app import crud, schemas
 from app.core.config import settings
-from app.api.fastapi_users_utils import fastapi_users_instance
+from app.db.base import Base  # noqa: F401
+
+# make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
+# otherwise, SQL Alchemy might fail to initialize relationships properly
+# for more details: https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/28
 
 
-async def init_db() -> None:
-    await Tortoise.init(
-        db_url=settings.DATABASE_URL,
-        modules={'models': ['app.models']}
-    )
-    # Generate the schema
-    await Tortoise.generate_schemas()
+async def init_db(db: AsyncSession) -> None:
+    # Tables should be created with Alembic migrations
+    # But if you don't want to use migrations, create
+    # the tables un-commenting the next line
+    #async with async_engine.begin() as conn:
+    #    await conn.run_sync(Base.metadata.drop_all)
+    #    await conn.run_sync(Base.metadata.create_all)
 
-    admin_email = settings.FIRST_SUPERUSER
-    found_users = await models.UserModel.filter(email=admin_email).count()
-    
-    if found_users == 0:
-        obj_in = schemas.UserCreate(
-            email=admin_email,
-            password='password',
+    user = await crud.user.get_by_email(db, email=settings.FIRST_SUPERUSER)
+    if not user:
+        user_in = schemas.UserCreate(
+            email=settings.FIRST_SUPERUSER,
+            password=settings.FIRST_SUPERUSER_PASSWORD,
             is_superuser=True,
-            is_verified=True,
-            principals=['role:admin', 'user:'+admin_email]
         )
-        await fastapi_users_instance.create_user(obj_in)
-    
-    await Tortoise.close_connections()
+        user = await crud.user.create(db, obj_in=user_in)  # noqa: F841
