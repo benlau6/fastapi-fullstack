@@ -28,14 +28,17 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 - [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin))
 
+<small>
+
 Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
 Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
 So if for educational purpose, to know what had been done, or for full control in workflow, to set what should be done, I recommend to build from scratch with only FastAPI. 
 
 You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
 
-You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS \
-(or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure)
+You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure
+
+</small>
 
 ## Reference
 
