@@ -33,8 +33,6 @@ services:
     volumes:
       - ./data/files:/data/files
       - ./data/db:/data/db 
-    depends_on:
-      - db
     env_file:
       - .env
     environment: 
@@ -49,40 +47,58 @@ services:
       # Make Traefik use this domain in HTTP
       - traefik.http.routers.api.entrypoints=http
       - traefik.http.routers.api.rule=Host(`127.0.0.1`) && PathPrefix(`/api`)
-      - traefik.http.middlewares.stripprefix.stripprefix.prefixes=/api
+      - traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api
       # Sets the maximum request body to 200MB
       - traefik.http.middlewares.sizelimit.buffering.maxRequestBodyBytes=200000000
       # Apply middlewares
-      - traefik.http.routers.api.middlewares=stripprefix@docker,sizelimit@docker
-    networks:
-      - backend
-  db:
-    image: postgres:12
-    ports: 
-      - 5432
-    networks:
-      - backend
-    # check PGDATA section https://hub.docker.com/_/postgres for this weird sub-directory config
-    volumes:
-      - ./data/db:/var/lib/postgresql/data/pgdata
-    env_file:
-      - .env
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - 5050
+      - traefik.http.routers.api.middlewares=api-stripprefix@docker,sizelimit@docker
     networks:
       - backend
     depends_on:
-      - db
-    env_file:
-      - .env
+      - mongodb
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - 27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081
+    restart: unless-stopped
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=password
+      - ME_CONFIG_SITE_BASEURL=/mongoadmin
+    volumes: 
+      - mongodb-data:/data/db  
+    depends_on:
+      - mongodb
+    networks:
+      - backend
     labels:
       - traefik.enable=true
-      - traefik.http.services.pgadmin.loadbalancer.server.port=5050
-      - traefik.http.routers.pgadmin.entrypoints=http
-      - traefik.http.routers.pgadmin.rule=Host(`127.0.0.1`)
+      - traefik.http.services.mongo-express.loadbalancer.server.port=8081
+      - traefik.http.routers.mongo-express.entrypoints=http
+      - traefik.http.routers.mongo-express.rule=Host(`127.0.0.1`) && PathPrefix(`/mongoadmin`)
+      #- traefik.http.middlewares.mongo-express-stripprefix.stripprefix.prefixes=/admin
+      #- traefik.http.routers.mongo-express.middlewares=mongo-express-stripprefix@docker
+volumes:
+  mongodb-data:
 networks:
   backend:

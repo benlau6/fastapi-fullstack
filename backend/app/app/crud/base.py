@@ -1,70 +1,58 @@
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from bson.objectid import ObjectId
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.base_class import Base
 
-ModelType = TypeVar("ModelType", bound=Base)
+DBModelType = TypeVar("DBModelType", bound=dict)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
-class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    def __init__(self, model: Type[ModelType]):
+class CRUDBase(Generic[DBModelType, CreateSchemaType, UpdateSchemaType]):
+
+    def __init__(self, db_schema):
         """
         CRUD object with default methods to Create, Read, Update, Delete (CRUD).
-        **Parameters**
-        * `model`: A SQLAlchemy model class
-        * `schema`: A Pydantic model (schema) class
         """
-        self.model = model
+        self.db_schema = db_schema
 
-    async def get(self, db: AsyncSession, id: Any) -> Optional[ModelType]:
-        result = await db.execute(select(self.model).where(self.model.id == id))
-        result = result.scalars().first()
-        return result
 
-    async def get_multi(
-        self, db: AsyncSession, *, skip: int = 0, limit: int = 100
-    ) -> List[ModelType]:
-        result = await db.execute(select(self.model).offset(skip).limit(limit))
-        result = result.scalars().all()
-        return result
+    def get(self, collection, id: Union[str, ObjectId]) -> Optional[DBModelType]:
+        if isinstance(id, str):
+            id = ObjectId(id)
+        return collection.find_one({'_id': id})
 
-    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
-        obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data)  # type: ignore
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
-        return db_obj
+    def get_multi(
+        self, collection, *, skip: int = 0, limit: int = 100
+    ) -> List[DBModelType]:
+        return list(collection.find().skip(skip).limit(limit))
 
-    async def update(
+    def create(self, collection, *, document_in: CreateSchemaType) -> DBModelType:
+        document_to_db= self.db_schema(**document_in.dict())
+        document_to_db_data = document_to_db.dict()
+        document_id = collection.insert_one(document_to_db_data).inserted_id
+        document_to_db_data['_id'] = document_id
+        return document_to_db_data
+
+    # exclude_unset=True is to exclude default values, very useful for partial update
+    # password or hashed_password is not excluded 
+    # because it is in document_in, which will be passed until the end
+    def update(
         self,
-        db: AsyncSession,
+        collection,
         *,
-        db_obj: ModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
-    ) -> ModelType:
-        obj_data = jsonable_encoder(db_obj)
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.dict(exclude_unset=True)
-        for field in obj_data:
-            if field in update_data:
-                setattr(db_obj, field, update_data[field])
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
-        return await db_obj
+        db_document: DBModelType,
+        document_in: UpdateSchemaType
+    ) -> DBModelType:
+        document_to_db= self.db_schema(**document_in.dict(exclude_unset=True))
+        document_to_db_data = document_to_db.dict(exclude_unset=True)
+        result = collection.update_one(db_document, {'$set': document_to_db_data})
+        return result.matched_count, result.modified_count
 
-    async def remove(self, db: AsyncSession, *, id: int) -> ModelType:
-        obj = await db.execute(select(self.model).where(self.model==id))
-        obj = obj.scalars().first()
-        await db.delete(obj)
-        await db.commit()
-        return obj
+    def delete(self, collection, *, id: Union[str, ObjectId]) -> DBModelType:
+        if isinstance(id, str):
+            id = ObjectId(id)
+        result = collection.delete_one({'_id': id})
+        return result.deleted_count

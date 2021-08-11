@@ -1,42 +1,45 @@
 from functools import lru_cache
-from typing import AsyncGenerator
 
-from fastapi import Header, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import ValidationError
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
-from jose import jwt
+from fastapi import (
+    Header,
+    Body,
+    Depends, 
+    Security,
+    HTTPException, 
+    status, 
+)
+from fastapi.security import (
+    OAuth2PasswordBearer,
+    SecurityScopes,
+)
 from fastapi_permissions import configure_permissions
 from fastapi_permissions import Authenticated, Everyone
+from pydantic import ValidationError
+from jose import jwt
 
-from app import models, schemas, crud
-from app.core import config, security
-from app.core.config import settings # immutable
-from app.db.session import AsyncSessionLocal
+from app import schemas, crud
+from app.core import security, config
+from app.core.config import settings
+from app.db.mongo import client
 
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.TOKEN_URL)
 
 
 ############# settings ###########
 @lru_cache
-def get_settings():
+def get_settings() -> config.Settings:
     return config.Settings()
 
 
-# Dependency
-async def get_db() -> AsyncGenerator:
-    try:
-        db = AsyncSessionLocal()
-        yield db
-    finally:
-        db.close()
+def get_db(settings: config.Settings = Depends(get_settings)):
+    return client[settings.MONGO_DB_NAME]
 
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
-)
-
+def get_user_collection(db = Depends(get_db)):
+    return db.user
     
+
 ##################################
 # could be used for fine-grained control
 async def verify_content_length(content_length: int = Header(...)):
@@ -55,37 +58,55 @@ async def verify_key(x_api_key: str = Header(...)):
         raise HTTPException(status_code=400, detail="X-Api-Key header invalid")
 
 
-############ fastapi-users #############
+############ user #############
 def get_current_user(
-    db: AsyncSession = Depends(get_db), token: str = Depends(reusable_oauth2)
-) -> models.User:
+    security_scopes: SecurityScopes,
+    token: str = Depends(oauth2_scheme),
+    collection = Depends(get_user_collection),
+) -> schemas.User:
+    if security_scopes.scopes:
+        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
+    else:
+        authenticate_value = f"Bearer"
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": authenticate_value},
+    )
     try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
-        )
-        token_data = schemas.TokenPayload(**payload)
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[security.ALGORITHM])
+        _id: str = payload.get('sub')
+        if _id is None:
+            raise credentials_exception
+        token_scopes = payload.get('scopes', [])
+        token_data = schemas.TokenData(scopes=token_scopes, id=_id)
     except (jwt.JWTError, ValidationError):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        )
-    user = crud.user.get(db, id=token_data.sub)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise credentials_exception
+    user = crud.user.get(collection, id=token_data.id)
+    if user is None:
+        raise credentials_exception
+    if not crud.user.is_superuser(user):
+        for scope in security_scopes.scopes:
+            if scope not in token_data.scopes:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Not enough permissions",
+                    headers={"WWW-Authenticate": authenticate_value},
+                )
     return user
 
 
 def get_current_active_user(
-    current_user: models.User = Depends(get_current_user),
-) -> models.User:
+    current_user: schemas.User = Depends(get_current_user)
+) -> schemas.User:
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 def get_current_active_superuser(
-    current_user: models.User = Depends(get_current_user),
-) -> models.User:
+    current_user: schemas.User = Depends(get_current_user)
+) -> schemas.User:
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"
@@ -104,4 +125,4 @@ def get_current_active_user_principals(current_user: schemas.User = Depends(get_
     return principals
 
 # Permission is already wrapped in Depends()
-Permission = configure_permissions(get_current_active_user_principals)
+ActiveUserPermission = configure_permissions(get_current_active_user_principals)

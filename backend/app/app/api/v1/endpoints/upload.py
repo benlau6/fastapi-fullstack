@@ -9,7 +9,7 @@ from fastapi import File, UploadFile, Depends, BackgroundTasks
 from app import schemas
 from app.core import config
 from app.api import deps
-from app.api.deps import Permission
+from app.api.deps import ActiveUserPermission
 
 
 router = APIRouter()
@@ -27,7 +27,7 @@ def write_file_to_local(form, file, settings):
 @router.post("/files", dependencies=[Depends(deps.verify_content_length)], response_model=schemas.UploadRecords)
 async def upload_files(
     files: List[UploadFile] = File(...), 
-    form: schemas.UploadForm = Permission('submit', schemas.UploadForm.as_form),
+    form: schemas.UploadForm = ActiveUserPermission('submit', schemas.UploadForm.as_form),
     current_user: schemas.User = Depends(deps.get_current_active_user),
     settings: config.Settings = Depends(deps.get_settings),
     *,

@@ -1,9 +1,8 @@
 alembic
 fastapi
-pydantic[email]
+pydantic[email, dotenv]
 python-multipart
 aiofiles
-python-dotenv
 pytest
 pytest-asyncio
 httpx
@@ -12,15 +11,7 @@ asgi-lifespan==1.*
 requests
 fastapi-crudrouter
 fastapi-permissions
-fastapi-admin
-#fastapi-users[sqlalchemy]
-asyncpg
-aiomysql
-asynctest
-SQLAlchemy
 passlib
 bcrypt
-aiosqlite
 python-jose
-psycopg2
-tenacity
+pymongo

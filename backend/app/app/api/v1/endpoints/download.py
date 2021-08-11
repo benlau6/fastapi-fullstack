@@ -8,7 +8,7 @@ from fastapi.responses import StreamingResponse
 from app import schemas
 from app.core import config
 from app.api import deps
-from app.api.deps import Permission
+from app.api.deps import ActiveUserPermission
 
 
 router = APIRouter()
@@ -21,7 +21,7 @@ def remove_file(path: str) -> None:
 @router.get("/files/{filename}")
 async def download_file(
     filename: str,
-    query: schemas.DownloadQuery = Permission('submit', schemas.DownloadQuery),
+    query: schemas.DownloadQuery = ActiveUserPermission('submit', schemas.DownloadQuery),
     settings: config.Settings = Depends(deps.get_settings)
     ):
     file_path = f'{settings.FILE_ROOT_PATH}/{query.base_dir}/{filename}'
@@ -34,7 +34,7 @@ async def download_file(
 @router.get("/files")
 def download_zipped_folder(
     background_tasks: BackgroundTasks,
-    query: schemas.DownloadQuery = Permission('submit', schemas.DownloadQuery),
+    query: schemas.DownloadQuery = ActiveUserPermission('submit', schemas.DownloadQuery),
     settings: config.Settings = Depends(deps.get_settings)
     ):
     shutil.make_archive(f'{settings.FILE_ROOT_PATH}/tmp/{query.zip_filename}', 'zip', root_dir=settings.FILE_ROOT_PATH, base_dir=query.base_dir)

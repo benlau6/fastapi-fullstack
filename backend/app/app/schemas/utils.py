@@ -1,8 +1,9 @@
+from typing import Type
+import inspect
+
 from fastapi import Form
 from pydantic import BaseModel
-from typing import Type
-from app.core.config import settings
-import inspect
+from bson.objectid import ObjectId
 
 
 def as_form(cls: Type[BaseModel]):
@@ -42,3 +43,17 @@ def as_form(cls: Type[BaseModel]):
     setattr(cls, 'as_form', _as_form)
 
     return cls
+
+
+class PyObjectId(ObjectId):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+    @classmethod
+    def validate(cls, v):
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid objectid")
+        return ObjectId(v)
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")
