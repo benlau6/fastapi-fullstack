@@ -2,7 +2,7 @@
 from .base import UpdateResponse, DeleteResponse
 from .upload import UploadRecord, UploadForm, UploadRecords
 from .download import DownloadQuery
-from .user import User, UserCreate, UserToDB, UserUpdate
+from .user import UserFromDB, UserCreate, UserToDB, UserUpdate, UserInDB
 from .token import Token, TokenData
 from .msg import Msg
 from .potato import Potato

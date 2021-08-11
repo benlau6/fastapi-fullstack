@@ -13,11 +13,11 @@ from app.core.config import settings
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.User])
+@router.get("/", response_model=List[schemas.UserFromDB])
 def read_users(
     skip: int = 0,
     limit: int = 100,
-    current_user: schemas.User = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -27,11 +27,11 @@ def read_users(
     return users
 
 
-@router.post("/", response_model=schemas.User)
+@router.post("/", response_model=schemas.UserFromDB)
 def create_user(
     *,
     user_in: schemas.UserCreate,
-    current_user: schemas.User = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -51,13 +51,13 @@ def create_user(
     return user
 
 
-@router.put("/me", response_model=schemas.User)
+@router.put("/me", response_model=schemas.UserFromDB)
 def update_user_me(
     *,
     password: str = Body(None),
     username: str = Body(None),
     email: EmailStr = Body(None),
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    current_user: schemas.UserFromDB = Depends(deps.get_current_active_user),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -75,9 +75,9 @@ def update_user_me(
     return user
 
 
-@router.get("/me", response_model=schemas.User)
+@router.get("/me", response_model=schemas.UserFromDB)
 def read_user_me(
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    current_user: schemas.UserFromDB = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Get current user.
@@ -85,7 +85,7 @@ def read_user_me(
     return current_user
 
 
-@router.post("/open", response_model=schemas.User)
+@router.post("/open", response_model=schemas.UserFromDB)
 def create_user_open(
     *,
     email: EmailStr = Body(...),
@@ -111,10 +111,10 @@ def create_user_open(
     return user
 
 
-@router.get("/{user_id}", response_model=schemas.User)
+@router.get("/{user_id}", response_model=schemas.UserFromDB)
 def read_user_by_id(
     user_id: str,
-    current_user: schemas.User = Depends(deps.get_current_active_user),
+    current_user: schemas.UserFromDB = Depends(deps.get_current_active_user),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -135,7 +135,7 @@ def update_user(
     *,
     user_id: str,
     user_in: schemas.UserUpdate,
-    current_user: schemas.User = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -161,7 +161,7 @@ def update_user(
 def delete_user(
     *,
     user_id: str,
-    current_user: schemas.User = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """

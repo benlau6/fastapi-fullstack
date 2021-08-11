@@ -33,8 +33,6 @@ services:
     volumes:
       - ./data/files:/data/files
       - ./data/db:/data/db 
-    env_file:
-      - .env
     environment: 
       # check for env: https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
       - PORT=3000

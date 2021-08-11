@@ -40,8 +40,8 @@ def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.post("/test-token", response_model=schemas.User)
-def test_token(current_user: schemas.User = Depends(deps.get_current_user)) -> Any:
+@router.post("/test-token", response_model=schemas.UserFromDB)
+def test_token(current_user: schemas.UserFromDB = Depends(deps.get_current_user)) -> Any:
     """
     Test access token
     """

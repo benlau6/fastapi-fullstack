@@ -1,17 +1,17 @@
 import requests
 
 import pytest
-import httpx
+from fastapi.testclient import TestClient
 
 from app.core import config
 
 # https://fastapi.tiangolo.com/tutorial/testing/
-@pytest.mark.asyncio
-async def test_read_api_status(
-    client: httpx.AsyncClient,
+
+def test_read_api_status(
+    client: TestClient,
     settings: config.Settings,
 ):
-    r = await client.get(f'{settings.ROOT_STR}/status')
+    r = client.get(f'{settings.ROOT_STR}/status')
     assert r.status_code == 200
     assert r.json() == {'status': 'OK'}
     

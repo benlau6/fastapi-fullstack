@@ -10,7 +10,6 @@ from pydantic import BaseSettings, PostgresDsn, validator
 class Settings(BaseSettings):
     ########## Server path config ###########
     FILE_ROOT_PATH: str = '/data/files/'
-    SQLALCHEMY_DB: str = 'sqlite'
     ########### MONGO ############
     MONGO_URI: str = 'mongodb://admin:password@mongodb:27017'
     MONGO_USER: str = 'admin'
@@ -22,7 +21,6 @@ class Settings(BaseSettings):
     ########## API path #############
     ROOT_STR: str = '/api'
     API_V1_STR: str = '/v1'
-    GRAPHQL_STR: str = '/graphql'
     TOKEN_RESOURCE_STR: str = '/login/access-token'
     ################################
     SECRET_KEY: str = secrets.token_urlsafe(32)
@@ -36,7 +34,7 @@ class Settings(BaseSettings):
     ############# user related ###########
     USERS_OPEN_REGISTRATION: bool = True
     EMAIL_PROVIDER_RESTRICTION: bool = True
-    ALLOWED_EMAIL_PROVIDER_LIST: List[str] = ['mtr', 'gmail', 'example']
+    ALLOWED_EMAIL_PROVIDER_LIST: List[str] = ['gmail', 'example', 'test']
     ############# limit #############
     PAYLOAD_LIMIT: int = 2000000
     #URL_DEFAULT_TTL=300

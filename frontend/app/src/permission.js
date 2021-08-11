@@ -34,10 +34,10 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           // note: principals must be a object array! such as: ['role:admin'] or ,['role:developer','role:editor']
-          const { principals = ['role:admin'] } = await store.dispatch('user/getInfo')
+          const { principals = ['role:admin'] } = store.dispatch('user/getInfo')
 
           // generate accessible routes map based on principals
-          const accessRoutes = await store.dispatch('permission/generateRoutes', principals)
+          const accessRoutes = store.dispatch('permission/generateRoutes', principals)
 
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
@@ -47,7 +47,7 @@ router.beforeEach(async(to, from, next) => {
           next({ ...to, replace: true })
         } catch (error) {
           // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
+          store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()

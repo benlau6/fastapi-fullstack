@@ -1,17 +1,12 @@
-alembic
 fastapi
 pydantic[email, dotenv]
+mypy
 python-multipart
 aiofiles
 pytest
-pytest-asyncio
-httpx
-httpx-oauth
-asgi-lifespan==1.*
 requests
 fastapi-crudrouter
 fastapi-permissions
-passlib
-bcrypt
+passlib[bcrypt]
 python-jose
 pymongo

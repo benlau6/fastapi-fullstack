@@ -114,7 +114,7 @@ export default {
   methods: {
     async getList() {
       this.listLoading = true
-      const { data } = await getUsers(this.listQuery)
+      const { data } = getUsers(this.listQuery)
       const users = data
       this.list = users
       this.total = users.length
@@ -129,7 +129,7 @@ export default {
         message: '操作Success',
         type: 'success'
       })
-      await updateUser(row.id, { 'is_active': status })
+      updateUser(row.id, { 'is_active': status })
     },
     handleCreate() {
       this.resetTemp()
@@ -190,7 +190,7 @@ export default {
         type: 'success',
         duration: 2000
       })
-      await deleteUser(row.id)
+      deleteUser(row.id)
       this.list.splice(index, 1)
     }
   }

@@ -35,7 +35,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     email: EmailStr
     password: str
-
+    
     ''' 
     You'll often want to use this together with pre, 
     since otherwise with always=True pydantic would try to validate the default None 
@@ -73,13 +73,18 @@ class UserToDB(UserBase):
 
 # Additional properties to return via API
 # not showing password or hashed_password
-class User(UserBase):
+class UserFromDB(UserBase):
     id: Optional[PyObjectId] = Field(None, alias="_id")
     class Config:
         allow_population_by_field_name = True
         response_model_by_alias=False
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+
+
+# just for type check in crud
+class UserInDB(UserToDB):
+    _id: ObjectId
 
 
 class UserCheckScopes(BaseModel):

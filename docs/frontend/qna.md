@@ -67,7 +67,7 @@
 
         @app.middleware("http")
         async def format_output_for_frontend(request: Request, call_next):
-            response = await call_next(request)
+            response = call_next(request)
             
             res_body = [x async for x in response.__dict__['body_iterator']]
             

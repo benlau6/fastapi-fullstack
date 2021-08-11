@@ -5,7 +5,7 @@ from app.core.config import settings
 from app.api.v1.api import api_v1
 
 
-def create_app() -> FastAPI:
+def create_app(settings) -> FastAPI:
     # to generate links to other docs at /api/docs
     tags_metadata = [
         {
@@ -42,7 +42,7 @@ def create_app() -> FastAPI:
     return app
 
 
-app = create_app()
+app = create_app(settings)
 
 
 # in case it is needed

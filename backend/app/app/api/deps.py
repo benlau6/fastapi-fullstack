@@ -63,7 +63,7 @@ def get_current_user(
     security_scopes: SecurityScopes,
     token: str = Depends(oauth2_scheme),
     collection = Depends(get_user_collection),
-) -> schemas.User:
+) -> schemas.UserFromDB:
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
     else:
@@ -97,16 +97,16 @@ def get_current_user(
 
 
 def get_current_active_user(
-    current_user: schemas.User = Depends(get_current_user)
-) -> schemas.User:
+    current_user: schemas.UserFromDB = Depends(get_current_user)
+) -> schemas.UserFromDB:
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 def get_current_active_superuser(
-    current_user: schemas.User = Depends(get_current_user)
-) -> schemas.User:
+    current_user: schemas.UserFromDB = Depends(get_current_user)
+) -> schemas.UserFromDB:
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"
@@ -114,7 +114,7 @@ def get_current_active_superuser(
     return current_user
 
 
-def get_current_active_user_principals(current_user: schemas.User = Depends(get_current_active_user)):
+def get_current_active_user_principals(current_user: schemas.UserFromDB = Depends(get_current_active_user)):
     if current_user is not None:
         # user is logged in
         principals = [Everyone, Authenticated]
@@ -125,4 +125,4 @@ def get_current_active_user_principals(current_user: schemas.User = Depends(get_
     return principals
 
 # Permission is already wrapped in Depends()
-ActiveUserPermission = configure_permissions(get_current_active_user_principals)
+Permission = configure_permissions(get_current_active_user_principals)
