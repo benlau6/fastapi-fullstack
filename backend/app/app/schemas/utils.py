@@ -1,8 +1,8 @@
-from typing import Type
+from typing import Type, List
 import inspect
 
 from fastapi import Form
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 from bson.objectid import ObjectId
 
 
@@ -57,3 +57,8 @@ class PyObjectId(ObjectId):
     @classmethod
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
+
+
+class Scope(constr(regex=r'^[a-z0-9-_]+(:[a-z0-9-_@.]+)+$')):
+    pass
+

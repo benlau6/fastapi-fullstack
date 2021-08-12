@@ -48,5 +48,5 @@ def download_zipped_folder(
 
 
 @router.get("/info", response_model=schemas.UserFromDB)
-async def get_info(current_user: schemas.UserFromDB = Depends(deps.get_current_active_user)):
+async def get_info(current_user: schemas.UserInDB = Depends(deps.get_current_active_user)):
     return current_user

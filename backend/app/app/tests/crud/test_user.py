@@ -1,6 +1,22 @@
+from typing import Optional
+
+import pytest
+
 from app import crud, schemas
 from app.core.security import verify_password
 from app.tests.utils.utils import random_email, random_lower_string
+
+
+# it will be executed once if called by a function
+@pytest.fixture
+def new_user(collection) -> Optional[schemas.UserInDB]:
+    email = random_email()
+    password = random_lower_string()
+    user_in = schemas.UserCreate(email=email, password=password)
+    user_id = crud.user.create(collection, document_in=user_in)
+    user = crud.user.get(collection, user_id)
+    return user
+
 
 
 def test_create_user(collection) -> None:

@@ -13,9 +13,10 @@ from app.tests.utils.user import get_custom_user_token_headers
 @pytest.fixture
 def download_user_token_headers(
     client: TestClient, 
-    settings: config.Settings, 
+    settings: config.Settings,
+    collection
     ) -> Dict[str, str]:
-    return get_custom_user_token_headers(client, settings, principals=['download:project1:dataset1'])
+    return get_custom_user_token_headers(client, settings, collection, scopes=['download:project1:dataset1']+settings.SCOPES_DOWNLOAD)
 
 
 def test_get_download_info_no_permission(
@@ -41,6 +42,7 @@ def test_get_download_info_has_permission(
     download_user_token_headers: Dict[str, str]
 ) -> None:
     r = client.get(f"{settings.DOWNLOAD_URL}/info", headers=download_user_token_headers)
+    print(download_user_token_headers)
     assert r.status_code == 200
 
 

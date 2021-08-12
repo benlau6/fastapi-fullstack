@@ -1,5 +1,7 @@
 from typing import Any, Dict, Optional, Union
 
+from pydantic import EmailStr
+
 from app import schemas
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
@@ -7,11 +9,11 @@ from app.crud.base import CRUDBase
 
 class CRUDUser(CRUDBase[schemas.UserInDB, schemas.UserCreate, schemas.UserUpdate]):
     
-    def get_by_email(self, collection, email: str) -> Optional[schemas.UserInDB]:
+    def get_by_email(self, collection, email: Union[str, EmailStr]) -> Optional[schemas.UserInDB]:
         user = collection.find_one({'email': email})
         return user
 
-    def authenticate(self, collection, email: str, password: str) -> Optional[schemas.UserInDB]:
+    def authenticate(self, collection, email: Union[str, EmailStr], password: str) -> Optional[schemas.UserInDB]:
         user = self.get_by_email(collection, email=email)
         if not user:
             return None

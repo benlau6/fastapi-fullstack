@@ -6,7 +6,7 @@ from fastapi import status
 @pytest.mark.parametrize(
     "path,method",
     [
-        ("test/v1/users", "GET"),
+        ("/v1/users", "GET"),
         ("/v1/login/access-token", "POST"),
         ("/v1/upload/info", "GET"),
         ("/v1/upload/files", "POST"),

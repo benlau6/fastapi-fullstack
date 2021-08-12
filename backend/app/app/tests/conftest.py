@@ -3,7 +3,7 @@ import shutil
 import os
 
 import pytest
-from fastapi import Depends, FastAPI
+from fastapi import Depends
 from fastapi.testclient import TestClient
 from fastapi_permissions import Allow
 
@@ -17,10 +17,11 @@ from app.api.deps import Permission
 from app.db.mongo import client as mongo_client
 
 
-test_api_root_str = 'test'
 test_file_root_path = '/data/test_files/'
 test_mongo_db_name = 'test'
-test_config = config.Settings(MONGO_DB_NAME=test_mongo_db_name, ROOT_STR=test_api_root_str, FILE_ROOT_PATH=test_file_root_path)
+# ROOT_STR = '' because inside the container, there is no proxy, 
+# then the original routes are mounted with no root str
+test_config = config.Settings(MONGO_DB_NAME=test_mongo_db_name, ROOT_STR='', FILE_ROOT_PATH=test_file_root_path)
 
 
 def get_settings_override():
@@ -47,90 +48,68 @@ def settings() -> config.Settings:
     return test_config
 
 
-@pytest.fixture(scope='session', autouse=True)
-def collection(settings: config.Settings):
-    return mongo_client[settings.MONGO_DB_NAME].user
-
-
-# it auto executes once, then cached returned obj until end of tests, perfect usecase for init user
-@pytest.fixture(scope='session', autouse=True)
-def normal_user(settings, collection) -> schemas.UserCreate:
-    email = settings.FIRST_NORMAL_USER
-    password = settings.FIRST_NORMAL_USER_PASSWORD
-    user_in = schemas.UserCreate(
-        email=email,
-        password=password,
-        is_verified=True,
-    )
-    user_id = crud.user.create(collection, document_in=user_in)
-    user = crud.user.get(collection, user_id)
-    return user
-
-
-@pytest.fixture(scope='session', autouse=True)
-def superuser(settings, collection) -> schemas.UserCreate:
-    email = settings.FIRST_SUPERUSER
-    password = settings.FIRST_SUPERUSER_PASSWORD
-    user_in = schemas.UserCreate(
-        email=email,
-        password=password,
-        is_superuser=True,
-        is_verified=True,
-    )
-    user_id = crud.user.create(collection, document_in=user_in)
-    user = crud.user.get(collection, user_id)
-    return user
-
-
-# it will be executed once if called by a function
-@pytest.fixture
-def new_user(collection) -> schemas.UserCreate:
-    email = random_email()
-    password = random_lower_string()
-    user_in = schemas.UserCreate(email=email, password=password)
-    user_id = crud.user.create(collection, document_in=user_in)
-    user = crud.user.get(collection, user_id)
-    return user
-
-
 @pytest.fixture
 def superuser_token_headers(
     client: TestClient, 
-    settings: config.Settings, 
-    superuser
+    settings: config.Settings
     ) -> Dict[str, str]:
-    return get_superuser_token_headers(client, settings, superuser)
+    return get_superuser_token_headers(client, settings)
 
 
 @pytest.fixture
 def normal_user_token_headers(
     client: TestClient, 
-    settings: config.Settings, 
-    normal_user
+    settings: config.Settings
     ) -> Dict[str, str]:
-    return get_normal_user_token_headers(client, settings, normal_user)
+    return get_normal_user_token_headers(client, settings)
+
+
+# autouse allows it to drop after all tests, but not right after some tests needing that.
+@pytest.fixture(scope="session", autouse=True)
+def collection(settings: config.Settings):
+    collection = mongo_client[settings.MONGO_DB_NAME].user
+    # init db with super user
+    superuser = crud.user.get_by_email(collection, email=settings.FIRST_SUPERUSER)
+    if not superuser:
+        user_in = schemas.UserCreate(
+            email=settings.FIRST_SUPERUSER,
+            password=settings.FIRST_SUPERUSER_PASSWORD,
+            is_superuser=True,
+        )
+        crud.user.create(collection, document_in=user_in) 
+
+    user = crud.user.get_by_email(collection, email=settings.FIRST_NORMAL_USER)
+    if not user:
+        user_in = schemas.UserCreate(
+            email=settings.FIRST_NORMAL_USER,
+            password=settings.FIRST_NORMAL_USER_PASSWORD,
+            is_verified=True,
+        )
+        crud.user.create(collection, document_in=user_in)
+    yield collection
+    # drop test db after all tests
+    mongo_client.drop_database('test')
 
 
 @pytest.fixture
-def app(settings) -> FastAPI:
+def app(settings) -> Generator:
     main_app = create_app(settings)
     main_app.dependency_overrides[deps.get_settings] = get_settings_override
-
-    @main_app.get("/test-current-user")
-    def _(user: schemas.UserFromDB = Depends(deps.get_current_user)):
+    @main_app.get("/test-current-user", response_model=schemas.UserFromDB)
+    def dummy1(user: schemas.UserFromDB = Depends(deps.get_current_user)):
         return user
 
-    @main_app.get("/test-current-active-user")
-    def _(user: schemas.UserFromDB = Depends(deps.get_current_active_user)):
+    @main_app.get("/test-current-active-user", response_model=schemas.UserFromDB)
+    def dummy2(user: schemas.UserFromDB = Depends(deps.get_current_active_user)):
         return user
 
-    @main_app.get("/test-current-active-superuser")
-    def _(user: schemas.UserFromDB = Depends(deps.get_current_active_superuser)):
+    @main_app.get("/test-current-active-superuser", response_model=schemas.UserFromDB)
+    def dummy3(user: schemas.UserFromDB = Depends(deps.get_current_active_superuser)):
         return user
 
-    example_acl = [(Allow, "role:admin", "view")]
+    example_acl = [(Allow, 'role:admin', "view")]
     @main_app.get("/test-user-permission")
-    def _(acls: list = Permission('view', example_acl)):
+    def dummy4(acls: list = Permission('view', example_acl)):
         return {'status': 'OK'}
 
     yield main_app

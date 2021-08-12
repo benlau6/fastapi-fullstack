@@ -14,8 +14,9 @@ from app.tests.utils.user import get_custom_user_token_headers
 def upload_user_token_headers(
     client: TestClient, 
     settings: config.Settings, 
+    collection
     ) -> Dict[str, str]:
-    return get_custom_user_token_headers(client, settings, principals=['upload:project1:dataset1'])
+    return get_custom_user_token_headers(client, settings, collection, scopes=['upload:project1:dataset1']+settings.SCOPES_UPLOAD)
 
 
 def test_get_upload_info_no_permission(

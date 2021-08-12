@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import List
 
 from fastapi import (
     Header,
@@ -50,7 +51,7 @@ async def verify_content_length(content_length: int = Header(...)):
 async def verify_content_type(content_type: int = Header(...)):
     accepted_types = ['csv', 'png']
     if content_type not in accepted_types:
-        raise HTTPException(status_code=..., detail=f"Incorrect file type")
+        raise HTTPException(status_code=400, detail=f"Incorrect file type")
 
 
 async def verify_key(x_api_key: str = Header(...)):
@@ -63,7 +64,7 @@ def get_current_user(
     security_scopes: SecurityScopes,
     token: str = Depends(oauth2_scheme),
     collection = Depends(get_user_collection),
-) -> schemas.UserFromDB:
+) -> schemas.UserInDB:
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
     else:
@@ -97,16 +98,16 @@ def get_current_user(
 
 
 def get_current_active_user(
-    current_user: schemas.UserFromDB = Depends(get_current_user)
-) -> schemas.UserFromDB:
+    current_user: schemas.UserInDB = Depends(get_current_user)
+) -> schemas.UserInDB:
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 def get_current_active_superuser(
-    current_user: schemas.UserFromDB = Depends(get_current_user)
-) -> schemas.UserFromDB:
+    current_user: schemas.UserInDB = Depends(get_current_user)
+) -> schemas.UserInDB:
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"
@@ -114,15 +115,17 @@ def get_current_active_superuser(
     return current_user
 
 
-def get_current_active_user_principals(current_user: schemas.UserFromDB = Depends(get_current_active_user)):
+def get_current_active_user_scopes(current_user: schemas.UserInDB = Depends(get_current_active_user)) -> List:
     if current_user is not None:
         # user is logged in
-        principals = [Everyone, Authenticated]
-        principals.extend(getattr(current_user, "principals", []))
+        scopes = [Everyone, Authenticated]
+        # it may be different for non-dict
+        # e.g. getattr(current_user, 'scopes', [])
+        scopes.extend(current_user.get('scopes', []))
     else:
         # user is not logged in
-        principals = [Everyone]
-    return principals
+        scopes = [Everyone]
+    return scopes
 
 # Permission is already wrapped in Depends()
-Permission = configure_permissions(get_current_active_user_principals)
+Permission = configure_permissions(get_current_active_user_scopes)

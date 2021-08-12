@@ -1,10 +1,10 @@
-from typing import Generic, List, Optional, TypeVar, Union, Tuple
+from typing import Generic, List, Optional, TypeVar, Union, Tuple, Dict
 from bson.objectid import ObjectId
 
 from pydantic import BaseModel
 
 
-DBModelType = TypeVar("DBModelType", bound=BaseModel)
+DBModelType = TypeVar("DBModelType", bound=Dict)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
@@ -17,7 +17,6 @@ class CRUDBase(Generic[DBModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.to_db_schema = to_db_schema
 
-
     def get(self, collection, id: Union[str, ObjectId]) -> Optional[DBModelType]:
         if isinstance(id, str):
             id = ObjectId(id)
@@ -29,7 +28,7 @@ class CRUDBase(Generic[DBModelType, CreateSchemaType, UpdateSchemaType]):
         return list(collection.find().skip(skip).limit(limit))
 
     def create(self, collection, document_in: CreateSchemaType) -> ObjectId:
-        document_to_db= self.to_db_schema(**document_in.dict())
+        document_to_db = self.to_db_schema(**document_in.dict())
         document_to_db_data = document_to_db.dict()
         return collection.insert_one(document_to_db_data).inserted_id
 
@@ -45,7 +44,7 @@ class CRUDBase(Generic[DBModelType, CreateSchemaType, UpdateSchemaType]):
         # exclude_unset=True is to exclude default values, very useful for partial update
         # password or hashed_password is not excluded 
         # because it is in document_in, which will be passed until the end
-        document_to_db= self.to_db_schema(**document_in.dict(exclude_unset=True))
+        document_to_db = self.to_db_schema(**document_in.dict(exclude_unset=True))
         document_to_db_data = document_to_db.dict(exclude_unset=True)
         # update by id
         result = collection.update_one({'_id': id}, {'$set': document_to_db_data})

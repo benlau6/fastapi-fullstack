@@ -17,6 +17,7 @@ from app.core.security import get_password_hash
 
 router = APIRouter()
 
+from app.db.mongo import client as mongo_client
 
 @router.post("/access-token", response_model=schemas.Token)
 def login_for_access_token(
@@ -41,7 +42,7 @@ def login_for_access_token(
 
 
 @router.post("/test-token", response_model=schemas.UserFromDB)
-def test_token(current_user: schemas.UserFromDB = Depends(deps.get_current_user)) -> Any:
+def test_token(current_user: schemas.UserInDB = Depends(deps.get_current_user)) -> Any:
     """
     Test access token
     """

@@ -1,6 +1,8 @@
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
+
+from app.schemas.utils import Scope
 
 
 class Token(BaseModel):
@@ -10,3 +12,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+    scopes: List[Scope]

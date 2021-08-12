@@ -1,7 +1,9 @@
+from typing import Dict, Optional, List, TypedDict
+
+from pydantic import BaseModel, Field, EmailStr, validator
 from bson.objectid import ObjectId
-from typing import Optional, List
-from pydantic import BaseModel, Field, EmailStr, validator, constr
-from app.schemas.utils import PyObjectId
+
+from app.schemas.utils import PyObjectId, Scope
 from app.core.config import settings
 from app.core.security import get_password_hash
 
@@ -15,9 +17,7 @@ class UserBase(BaseModel):
     # first str before ':' should only be in a-z, 0-9, -, _
     # second or after str after first ':' should only be in a-z, 0-9, -, _, @, . (think of email)
     # ':some_str' should appear at least 1, and can appear more than 1
-    scopes: Optional[List[constr(regex=r'^[a-z0-9-_]+(:[a-z0-9-_@.]+)+$')]] = None
-    full_name: Optional[str] = None
-    contact_number: Optional[str] = None
+    scopes: Optional[List[Scope]] = None
 
     @validator('email')
     def email_validate_provider(cls, v):
@@ -25,10 +25,6 @@ class UserBase(BaseModel):
             if not any(provider in v for provider in settings.ALLOWED_EMAIL_PROVIDER_LIST):
                 raise ValueError("Invalid email provider")
         return v
-
-    @property
-    def short_name(self) -> str:
-        return self.email.split('@')[0]
 
 
 # Properties to receive via API on creation
@@ -82,20 +78,16 @@ class UserFromDB(UserBase):
         json_encoders = {ObjectId: str}
 
 
-# just for type check in crud
-class UserInDB(UserToDB):
-    _id: ObjectId
-
-
 class UserCheckScopes(BaseModel):
     email: Optional[EmailStr] = None
-    scopes: Optional[List[str]] = None
+    scopes: Optional[List[Scope]] = None
 
 
-class UpdateResponse(BaseModel):
-    matched_count: int 
-    modified_count: int
-
-
-class DeleteResponse(BaseModel):
-    deleted_count: int
+# just for type check in crud
+class UserInDB(TypedDict):
+    _id: ObjectId
+    email: Optional[EmailStr]
+    hashed_password: str
+    is_active: bool
+    is_superuser: bool
+    scopes: Optional[List[Scope]]

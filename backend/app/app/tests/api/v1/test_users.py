@@ -3,12 +3,12 @@ from typing import Dict
 import pytest
 from fastapi.testclient import TestClient
 
+from app import crud, schemas
 from app.core import config
 from app.tests.utils.utils import random_email, random_lower_string
 
+
 # https://fastapi.tiangolo.com/tutorial/testing/
-
-
 def test_get_users_superuser_me(
     client: TestClient, settings: config.Settings, superuser_token_headers: Dict[str, str]
 ) -> None:
@@ -34,16 +34,18 @@ def test_get_users_normal_user_me(
 
 
 def test_get_existing_user(
-    client: TestClient, settings: config.Settings, superuser_token_headers: Dict[str, str]
-, new_user) -> None:
-    user_id = new_user['_id']
+    client: TestClient, settings: config.Settings, collection, superuser_token_headers: Dict[str, str]) -> None:
+    email = random_email()
+    password = random_lower_string()
+    user_in = schemas.UserCreate(email=email, password=password)
+    user_id = crud.user.create(collection, document_in=user_in)
     r = client.get(
         f"{settings.USERS_URL}/{user_id}", headers=superuser_token_headers,
     )
     assert 200 <= r.status_code < 300
     found_user = r.json()
     assert found_user
-    assert found_user['email'] == new_user.email
+    assert found_user['email'] == email
 
 
 

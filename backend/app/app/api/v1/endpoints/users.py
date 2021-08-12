@@ -17,7 +17,7 @@ router = APIRouter()
 def read_users(
     skip: int = 0,
     limit: int = 100,
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -31,7 +31,7 @@ def read_users(
 def create_user(
     *,
     user_in: schemas.UserCreate,
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -57,7 +57,7 @@ def update_user_me(
     password: str = Body(None),
     username: str = Body(None),
     email: EmailStr = Body(None),
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_user),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -67,17 +67,15 @@ def update_user_me(
     user_in = schemas.UserUpdate(**current_user_data)
     if password is not None:
         user_in.password = password
-    if username is not None:
-        user_in.username = username
     if email is not None:
         user_in.email = email
-    user = crud.user.update(collection, db_document=current_user, document_in=user_in)
+    user = crud.user.update(collection, id=current_user['_id'], document_in=user_in)
     return user
 
 
 @router.get("/me", response_model=schemas.UserFromDB)
 def read_user_me(
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_user),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Get current user.
@@ -114,7 +112,7 @@ def create_user_open(
 @router.get("/{user_id}", response_model=schemas.UserFromDB)
 def read_user_by_id(
     user_id: str,
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_user),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -135,7 +133,7 @@ def update_user(
     *,
     user_id: str,
     user_in: schemas.UserUpdate,
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """
@@ -147,13 +145,14 @@ def update_user(
             status_code=404,
             detail="The user does not exists",
         )
-    check_user = crud.user.get_by_email(collection, email=user_in.email)
-    if check_user is not None:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this username already exists in the system."
-        )
-    matched_count, modified_count = crud.user.update(collection, db_document=user, document_in=user_in)
+    if 'email' in user_in:
+        check_user = crud.user.get_by_email(collection, email=user_in.email)
+        if check_user is not None:
+            raise HTTPException(
+                status_code=400,
+                detail="The user with this username already exists in the system."
+            )
+    matched_count, modified_count = crud.user.update(collection, id=user_id, document_in=user_in)
     return {'matched_count': matched_count, 'modified_count': modified_count}
 
 
@@ -161,7 +160,7 @@ def update_user(
 def delete_user(
     *,
     user_id: str,
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection = Depends(deps.get_user_collection),
 ) -> Any:
     """

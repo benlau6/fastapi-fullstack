@@ -28,7 +28,7 @@ def write_file_to_local(form, file, settings):
 async def upload_files(
     files: List[UploadFile] = File(...), 
     form: schemas.UploadForm = Permission('submit', schemas.UploadForm.as_form),
-    current_user: schemas.UserFromDB = Depends(deps.get_current_active_user),
+    current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
     settings: config.Settings = Depends(deps.get_settings),
     *,
     background_tasks: BackgroundTasks,
@@ -41,7 +41,7 @@ async def upload_files(
             filename=file.filename, 
             #file_size=file.file.tell(), # its not working, needa read all to return actual size, but it slow down the processing, which now put to background
             file_content_type=file.content_type, 
-            owner=current_user.email
+            owner=current_user['email']
         )
         return record
 
@@ -51,5 +51,5 @@ async def upload_files(
 
 
 @router.get("/info", response_model=schemas.UserFromDB)
-async def get_info(current_user: schemas.UserFromDB = Depends(deps.get_current_active_user)):
+async def get_info(current_user: schemas.UserInDB = Depends(deps.get_current_active_user)):
     return current_user

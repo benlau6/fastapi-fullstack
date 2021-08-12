@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     ########## Server path config ###########
     FILE_ROOT_PATH: str = '/data/files/'
     ########### MONGO ############
-    MONGO_URI: str = 'mongodb://admin:password@mongodb:27017'
     MONGO_USER: str = 'admin'
     MONGO_PASSWORD: str = 'password'
     MONGO_SERVER: str = 'mongodb'
@@ -61,6 +60,10 @@ class Settings(BaseSettings):
     @property
     def TOKEN_URL(self) -> str:
         return f'{self.ROOT_STR}{self.API_V1_STR}{self.TOKEN_RESOURCE_STR}'
+
+    @property
+    def TOKEN_TEST_URL(self) -> str:
+        return f'{self.ROOT_STR}{self.API_V1_STR}/login/test-token'
 
     @property
     def USERS_URL(self) -> str:

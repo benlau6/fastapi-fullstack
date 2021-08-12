@@ -15,21 +15,19 @@ def principals():
 
 def get_superuser_token_headers(
     client: TestClient, 
-    settings: config.Settings, 
-    superuser
+    settings: config.Settings
     ) -> Dict[str, str]:
     login_data = {"username": settings.FIRST_SUPERUSER, "password": settings.FIRST_SUPERUSER_PASSWORD}
     r = client.post(settings.TOKEN_URL, data=login_data)
     response = r.json()
     auth_token = response["access_token"]
-    headers = {"Authorization": f"Bearer {auth_token}", 'path':settings.TOKEN_URL}
+    headers = {"Authorization": f"Bearer {auth_token}"}
     return headers
 
 
 def get_normal_user_token_headers(
     client: TestClient, 
     settings: config.Settings, 
-    user,
     ) -> Dict[str, str]:
     login_data = {"username": settings.FIRST_NORMAL_USER, "password": settings.FIRST_NORMAL_USER_PASSWORD}
     r = client.post(settings.TOKEN_URL, data=login_data)
@@ -42,15 +40,16 @@ def get_normal_user_token_headers(
 def get_custom_user_token_headers(
     client: TestClient, 
     settings: config.Settings, 
-    principals: List[str],
-    collection
+    collection,
+    *,
+    scopes: List[str],
 ) -> Dict[str, str]:
     email=random_email()
     password=random_lower_string()
     obj_in = schemas.UserCreate(
         email=email,
         password=password,
-        principals=['user:'+email] + principals
+        scopes=['user:'+email] + scopes
     )
     crud.user.create(collection, obj_in)
     login_data = {"username": email, "password": password}

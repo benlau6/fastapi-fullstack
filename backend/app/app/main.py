@@ -1,24 +1,24 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api import deps
 from app.core.config import settings
-from app.api.v1.api import api_v1
+from app.core import config
+from app.api.v1.api import router as v1_router
+
+test_file_root_path = '/data/test_files/'
+test_mongo_db_name = 'test'
+# ROOT_STR = '' because inside the container, there is no proxy, 
+# then the original routes are mounted with no root str
+test_config = config.Settings(MONGO_DB_NAME=test_mongo_db_name, ROOT_STR='', FILE_ROOT_PATH=test_file_root_path)
 
 
-def create_app(settings) -> FastAPI:
-    # to generate links to other docs at /api/docs
-    tags_metadata = [
-        {
-            'name': 'v1',
-            "description": "API version 1, check link on the right",
-            'externalDocs': {
-                'description': 'sub-docs',
-                'url': 'http://127.0.0.1/api/v1/docs'
-            }
-        },
-    ]
-    
-    app = FastAPI(root_path=settings.ROOT_STR, openapi_tags=tags_metadata)
+def get_settings_override():
+    return test_config
+
+
+def create_app(settings) -> FastAPI:    
+    app = FastAPI(root_path=settings.ROOT_STR)
 
     app.add_middleware(
         CORSMiddleware,
@@ -33,7 +33,7 @@ def create_app(settings) -> FastAPI:
     )
 
     # instead of include_router, so to separate differnt versions
-    app.mount(settings.API_V1_STR, api_v1)
+    app.include_router(v1_router)
 
     @app.get("/status")
     def read_api_status():
