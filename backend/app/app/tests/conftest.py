@@ -10,18 +10,23 @@ from fastapi_permissions import Allow
 from app.main import create_app
 from app.core import config
 from app import schemas, crud
-from app.tests.utils.user import get_normal_user_token_headers, get_superuser_token_headers
+from app.tests.utils.user import (
+    get_normal_user_token_headers,
+    get_superuser_token_headers,
+)
 from app.tests.utils.utils import random_email, random_lower_string
 from app.api import deps
 from app.api.deps import Permission
 from app.db.mongo import client as mongo_client
 
 
-test_file_root_path = '/data/test_files/'
-test_mongo_db_name = 'test'
-# ROOT_STR = '' because inside the container, there is no proxy, 
+test_file_root_path = "/data/test_files/"
+test_mongo_db_name = "test"
+# ROOT_STR = '' because inside the container, there is no proxy,
 # then the original routes are mounted with no root str
-test_config = config.Settings(MONGO_DB_NAME=test_mongo_db_name, ROOT_STR='', FILE_ROOT_PATH=test_file_root_path)
+test_config = config.Settings(
+    MONGO_DB_NAME=test_mongo_db_name, ROOT_STR="", FILE_ROOT_PATH=test_file_root_path
+)
 
 
 def get_settings_override():
@@ -32,35 +37,33 @@ def get_settings_override():
 def pytest_sessionstart(session):
     try:
         os.makedirs(test_file_root_path)
-    except:
+    except Exception:
         pass
 
 
 def pytest_sessionfinish(session, exitstatus):
     try:
         shutil.rmtree(test_file_root_path)
-    except:
+    except Exception:
         pass
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def settings() -> config.Settings:
     return test_config
 
 
 @pytest.fixture
 def superuser_token_headers(
-    client: TestClient, 
-    settings: config.Settings
-    ) -> Dict[str, str]:
+    client: TestClient, settings: config.Settings
+) -> Dict[str, str]:
     return get_superuser_token_headers(client, settings)
 
 
 @pytest.fixture
 def normal_user_token_headers(
-    client: TestClient, 
-    settings: config.Settings
-    ) -> Dict[str, str]:
+    client: TestClient, settings: config.Settings
+) -> Dict[str, str]:
     return get_normal_user_token_headers(client, settings)
 
 
@@ -76,7 +79,7 @@ def collection(settings: config.Settings):
             password=settings.FIRST_SUPERUSER_PASSWORD,
             is_superuser=True,
         )
-        crud.user.create(collection, document_in=user_in) 
+        crud.user.create(collection, document_in=user_in)
 
     user = crud.user.get_by_email(collection, email=settings.FIRST_NORMAL_USER)
     if not user:
@@ -88,13 +91,14 @@ def collection(settings: config.Settings):
         crud.user.create(collection, document_in=user_in)
     yield collection
     # drop test db after all tests
-    mongo_client.drop_database('test')
+    mongo_client.drop_database("test")
 
 
 @pytest.fixture
 def app(settings) -> Generator:
     main_app = create_app(settings)
     main_app.dependency_overrides[deps.get_settings] = get_settings_override
+
     @main_app.get("/test-current-user", response_model=schemas.UserFromDB)
     def dummy1(user: schemas.UserFromDB = Depends(deps.get_current_user)):
         return user
@@ -107,10 +111,11 @@ def app(settings) -> Generator:
     def dummy3(user: schemas.UserFromDB = Depends(deps.get_current_active_superuser)):
         return user
 
-    example_acl = [(Allow, 'role:admin', "view")]
+    example_acl = [(Allow, "role:admin", "view")]
+
     @main_app.get("/test-user-permission")
-    def dummy4(acls: list = Permission('view', example_acl)):
-        return {'status': 'OK'}
+    def dummy4(acls: list = Permission("view", example_acl)):
+        return {"status": "OK"}
 
     yield main_app
 

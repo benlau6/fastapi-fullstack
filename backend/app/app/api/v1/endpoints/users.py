@@ -18,7 +18,7 @@ def read_users(
     skip: int = 0,
     limit: int = 100,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
+    collection=Depends(deps.get_user_collection),
 ) -> Any:
     """
     Retrieve users.
@@ -32,7 +32,7 @@ def create_user(
     *,
     user_in: schemas.UserCreate,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
+    collection=Depends(deps.get_user_collection),
 ) -> Any:
     """
     Create new user.
@@ -44,7 +44,7 @@ def create_user(
             detail="The user with this username already exists in the system.",
         )
     user = crud.user.create(collection, document_in=user_in)
-    #if settings.EMAILS_ENABLED and user_in.email:
+    # if settings.EMAILS_ENABLED and user_in.email:
     #    send_new_account_email(
     #        email_to=user_in.email, username=user_in.email, password=user_in.password
     #    )
@@ -58,7 +58,7 @@ def update_user_me(
     username: str = Body(None),
     email: EmailStr = Body(None),
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
-    collection = Depends(deps.get_user_collection),
+    collection=Depends(deps.get_user_collection),
 ) -> Any:
     """
     Update own user.
@@ -69,7 +69,7 @@ def update_user_me(
         user_in.password = password
     if email is not None:
         user_in.email = email
-    user = crud.user.update(collection, id=current_user['_id'], document_in=user_in)
+    user = crud.user.update(collection, id=current_user["_id"], document_in=user_in)
     return user
 
 
@@ -88,7 +88,7 @@ def create_user_open(
     *,
     email: EmailStr = Body(...),
     password: str = Body(...),
-    collection = Depends(deps.get_user_collection),
+    collection=Depends(deps.get_user_collection),
 ) -> Any:
     """
     Create new user without the need to be logged in.
@@ -113,7 +113,7 @@ def create_user_open(
 def read_user_by_id(
     user_id: str,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
-    collection = Depends(deps.get_user_collection),
+    collection=Depends(deps.get_user_collection),
 ) -> Any:
     """
     Get a specific user by id.
@@ -134,7 +134,7 @@ def update_user(
     user_id: str,
     user_in: schemas.UserUpdate,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
+    collection=Depends(deps.get_user_collection),
 ) -> Any:
     """
     Update a user.
@@ -142,18 +142,19 @@ def update_user(
     user = crud.user.get(collection, id=user_id)
     if not user:
         raise HTTPException(
-            status_code=404,
-            detail="The user does not exists",
+            status_code=404, detail="The user does not exists",
         )
-    if 'email' in user_in:
+    if "email" in user_in:
         check_user = crud.user.get_by_email(collection, email=user_in.email)
         if check_user is not None:
             raise HTTPException(
                 status_code=400,
-                detail="The user with this username already exists in the system."
+                detail="The user with this username already exists in the system.",
             )
-    matched_count, modified_count = crud.user.update(collection, id=user_id, document_in=user_in)
-    return {'matched_count': matched_count, 'modified_count': modified_count}
+    matched_count, modified_count = crud.user.update(
+        collection, id=user_id, document_in=user_in
+    )
+    return {"matched_count": matched_count, "modified_count": modified_count}
 
 
 @router.delete("/{user_id}", response_model=schemas.DeleteResponse)
@@ -161,10 +162,10 @@ def delete_user(
     *,
     user_id: str,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
+    collection=Depends(deps.get_user_collection),
 ) -> Any:
     """
     Delete a user.
     """
     deleted_count = crud.user.delete(collection, id=user_id)
-    return {'deleted_count': deleted_count}
+    return {"deleted_count": deleted_count}

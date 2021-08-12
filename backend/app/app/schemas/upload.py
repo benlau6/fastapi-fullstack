@@ -1,4 +1,4 @@
-from typing import Optional, List 
+from typing import Optional, List
 from datetime import datetime, timedelta
 
 from pydantic import BaseModel, EmailStr
@@ -35,32 +35,31 @@ class UploadForm(BaseModel):
 
     def __acl__(self):
         return [
-        (Allow, "role:admin", All),
-        (Allow, f"upload:{self.project}:all", "submit"),
-        (Allow, f"upload:{self.project}:{self.dataset}", "submit"),
-    ]
+            (Allow, "role:admin", All),
+            (Allow, f"upload:{self.project}:all", "submit"),
+            (Allow, f"upload:{self.project}:{self.dataset}", "submit"),
+        ]
 
     @property
     def date_padding_prefix(self):
-        return f'/{self.year}/{self.month:02}/{self.day:02}'
+        return f"/{self.year}/{self.month:02}/{self.day:02}"
 
     @property
     def date_prefix(self):
-        return f'/{self.year}/{self.month}/{self.day}'        
+        return f"/{self.year}/{self.month}/{self.day}"
 
     @property
     def date_str(self):
-        return f'{self.year}{self.month:02}{self.day:02}'
+        return f"{self.year}{self.month:02}{self.day:02}"
 
     @property
     def zip_filename(self):
-        return f'{self.date_str}_{self.project}_{self.dataset}'
+        return f"{self.date_str}_{self.project}_{self.dataset}"
 
     @property
     def base_dir(self):
-        return f'{self.project}/{self.dataset}{self.date_prefix}'    
+        return f"{self.project}/{self.dataset}{self.date_prefix}"
 
 
 class UploadRecords(BaseModel):
     records: Optional[List[UploadRecord]] = None
-

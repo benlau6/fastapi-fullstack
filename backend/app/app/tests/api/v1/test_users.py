@@ -10,7 +10,9 @@ from app.tests.utils.utils import random_email, random_lower_string
 
 # https://fastapi.tiangolo.com/tutorial/testing/
 def test_get_users_superuser_me(
-    client: TestClient, settings: config.Settings, superuser_token_headers: Dict[str, str]
+    client: TestClient,
+    settings: config.Settings,
+    superuser_token_headers: Dict[str, str],
 ) -> None:
     r = client.get(f"{settings.USERS_URL}/me", headers=superuser_token_headers)
     current_user = r.json()
@@ -20,9 +22,10 @@ def test_get_users_superuser_me(
     assert current_user["email"] == settings.FIRST_SUPERUSER
 
 
-
 def test_get_users_normal_user_me(
-    client: TestClient, settings: config.Settings, normal_user_token_headers: Dict[str, str]
+    client: TestClient,
+    settings: config.Settings,
+    normal_user_token_headers: Dict[str, str],
 ) -> None:
     r = client.get(f"{settings.USERS_URL}/me", headers=normal_user_token_headers)
     current_user = r.json()
@@ -32,26 +35,26 @@ def test_get_users_normal_user_me(
     assert current_user["email"] == settings.FIRST_NORMAL_USER
 
 
-
 def test_get_existing_user(
-    client: TestClient, settings: config.Settings, collection, superuser_token_headers: Dict[str, str]) -> None:
+    client: TestClient,
+    settings: config.Settings,
+    collection,
+    superuser_token_headers: Dict[str, str],
+) -> None:
     email = random_email()
     password = random_lower_string()
     user_in = schemas.UserCreate(email=email, password=password)
     user_id = crud.user.create(collection, document_in=user_in)
-    r = client.get(
-        f"{settings.USERS_URL}/{user_id}", headers=superuser_token_headers,
-    )
+    r = client.get(f"{settings.USERS_URL}/{user_id}", headers=superuser_token_headers,)
     assert 200 <= r.status_code < 300
     found_user = r.json()
     assert found_user
-    assert found_user['email'] == email
+    assert found_user["email"] == email
 
 
-
-#def test_register(
+# def test_register(
 #    client: TestClient, settings: config.Settings
-#) -> None:
+# ) -> None:
 #    username = random_email()
 #    password = random_lower_string()
 #    register_data = {"email": username, "password": password}

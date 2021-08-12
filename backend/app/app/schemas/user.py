@@ -19,10 +19,12 @@ class UserBase(BaseModel):
     # ':some_str' should appear at least 1, and can appear more than 1
     scopes: Optional[List[Scope]] = None
 
-    @validator('email')
+    @validator("email")
     def email_validate_provider(cls, v):
         if settings.EMAIL_PROVIDER_RESTRICTION:
-            if not any(provider in v for provider in settings.ALLOWED_EMAIL_PROVIDER_LIST):
+            if not any(
+                provider in v for provider in settings.ALLOWED_EMAIL_PROVIDER_LIST
+            ):
                 raise ValueError("Invalid email provider")
         return v
 
@@ -31,21 +33,22 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     email: EmailStr
     password: str
-    
-    ''' 
-    You'll often want to use this together with pre, 
-    since otherwise with always=True pydantic would try to validate the default None 
+
+    """
+    You'll often want to use this together with pre,
+    since otherwise with always=True pydantic would try to validate the default None
     which would cause an error.
-    '''
-    @validator('scopes', pre=True, always=True)
+    """
+
+    @validator("scopes", pre=True, always=True)
     def set_scopes(cls, v, values):
         if v is None:
             v = []
-        default_scope = 'user:' + values['email']
+        default_scope = "user:" + values["email"]
         if default_scope not in v:
             v.append(default_scope)
-        if values['is_superuser'] == True:
-            v.append('role:admin')
+        if values["is_superuser"] is True:
+            v.append("role:admin")
         return v
 
 
@@ -56,13 +59,13 @@ class UserUpdate(UserBase):
 
 # Additional properties stored in DB
 class UserToDB(UserBase):
-    hashed_password: str = Field(alias='password')
+    hashed_password: str = Field(alias="password")
 
     class Config:
-        allow_population_by_field_name=True
-        response_model_by_alias=False
-    
-    @validator('hashed_password')
+        allow_population_by_field_name = True
+        response_model_by_alias = False
+
+    @validator("hashed_password")
     def hash_password(cls, v):
         return get_password_hash(v)
 
@@ -71,9 +74,10 @@ class UserToDB(UserBase):
 # not showing password or hashed_password
 class UserFromDB(UserBase):
     id: Optional[PyObjectId] = Field(None, alias="_id")
+
     class Config:
         allow_population_by_field_name = True
-        response_model_by_alias=False
+        response_model_by_alias = False
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
