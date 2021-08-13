@@ -66,6 +66,6 @@ def test_get_existing_user(
 #    )
 #    assert r.status_code == 201
 #    created_user = r.json()
-#    assert created_user['principals'] == [f'user:{username}']
+#    assert created_user['scopes'] == [f'user:{username}']
 #    assert 'hashed_password' not in created_user
 #    assert 'password' not in created_user

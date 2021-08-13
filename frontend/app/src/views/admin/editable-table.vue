@@ -23,9 +23,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="240px" label="Principals">
+      <el-table-column min-width="240px" label="Scopes">
         <template slot-scope="{row}">
-          <ul v-for="principal in row.principals" :key="principal">{{ principal }}</ul>
+          <ul v-for="principal in row.scopes" :key="principal">{{ principal }}</ul>
         </template>
       </el-table-column>
 

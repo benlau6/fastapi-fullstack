@@ -17,7 +17,7 @@ import Layout from '@/layout'
  * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
-    principals: ['role:admin','role:editor']    control the page principals (you can set multiple principals)
+    scopes: ['role:admin','role:editor']    control the page scopes (you can set multiple scopes)
     title: 'title'               the name show in sidebar and breadcrumb (recommend set)
     icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
     breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
@@ -28,7 +28,7 @@ import Layout from '@/layout'
 /**
  * constantRoutes
  * a base page that does not have permission requirements
- * all principals can be accessed
+ * all scopes can be accessed
  */
 export const constantRoutes = [
   {
@@ -87,7 +87,7 @@ export const constantRoutes = [
 
 /**
  * asyncRoutes
- * the routes that need to be dynamically loaded based on user principals
+ * the routes that need to be dynamically loaded based on user scopes
  */
 export const asyncRoutes = [
   {

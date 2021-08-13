@@ -9,7 +9,7 @@ from app.tests.utils.utils import random_email, random_lower_string
 
 
 @pytest.fixture
-def principals() -> List[str]:
+def scopes() -> List[str]:
     return ["role:test"]
 
 
