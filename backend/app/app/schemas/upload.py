@@ -40,6 +40,10 @@ class UploadForm(BaseModel):
             (Allow, f"upload:{self.project}:{self.dataset}", "submit"),
         ]
 
+    def as_form(self) -> None:
+        # to be replaced by as_form decorator
+        pass
+
     @property
     def date_padding_prefix(self) -> str:
         return f"/{self.year}/{self.month:02}/{self.day:02}"

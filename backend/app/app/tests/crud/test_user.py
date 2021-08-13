@@ -113,7 +113,9 @@ def test_check_if_user_is_superuser(collection: Any) -> None:
     assert is_superuser is True
 
 
-def test_check_if_user_is_superuser_normal_user(collection: Any, new_user: schemas.UserInDB) -> None:
+def test_check_if_user_is_superuser_normal_user(
+    collection: Any, new_user: schemas.UserInDB
+) -> None:
     created_user = crud.user.get(collection, new_user["_id"])
     assert created_user
     is_superuser = crud.user.is_superuser(created_user)

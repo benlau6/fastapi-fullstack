@@ -47,7 +47,9 @@ def test_use_user_access_token(
     assert "email" in result
 
 
-def test_superuser_token_headers(client: TestClient, superuser_token_headers: Dict[str, str]) -> None:
+def test_superuser_token_headers(
+    client: TestClient, superuser_token_headers: Dict[str, str]
+) -> None:
     r = client.get("/test-current-active-superuser", headers=superuser_token_headers)
     user = r.json()
     assert r.status_code == 200
@@ -56,7 +58,9 @@ def test_superuser_token_headers(client: TestClient, superuser_token_headers: Di
     assert "role:admin" in user["scopes"]
 
 
-def test_normal_user_token_headers(client: TestClient, normal_user_token_headers: Dict[str, str]) -> None:
+def test_normal_user_token_headers(
+    client: TestClient, normal_user_token_headers: Dict[str, str]
+) -> None:
     r = client.get("/test-current-active-user", headers=normal_user_token_headers)
     user = r.json()
     assert r.status_code == 200
@@ -83,7 +87,9 @@ def test_custom_user_token_headers(
     assert "role:custom" in user["scopes"]
 
 
-def test_superuser_permission_by_headers(client: TestClient, superuser_token_headers: Dict[str, str]) -> None:
+def test_superuser_permission_by_headers(
+    client: TestClient, superuser_token_headers: Dict[str, str]
+) -> None:
     r = client.get("/test-user-permission", headers=superuser_token_headers)
     assert r.status_code == 200
     assert r.json() == {"status": "OK"}

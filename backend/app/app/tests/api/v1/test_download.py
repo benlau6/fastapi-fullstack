@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 import os
 
 import pytest
@@ -55,7 +55,8 @@ def test_get_download_file_no_permission(
     client: TestClient,
     download_user_token_headers: Dict[str, str],
 ) -> None:
-    download_form_data = {
+    # https://github.com/python/mypy/issues/3176
+    download_form_data: Dict[str, Union[int, str]]  = {
         "project": "project_no_permission",
         "dataset": "dataset1",
         "year": 2020,
@@ -85,7 +86,7 @@ def test_get_download_file(
     client: TestClient,
     download_user_token_headers: Dict[str, str],
 ) -> None:
-    download_form_data = {
+    download_form_data: Dict[str, Union[int, str]] = {
         "project": "project1",
         "dataset": "dataset1",
         "year": 2020,
@@ -116,7 +117,7 @@ def test_get_download_zipped_folder(
     client: TestClient,
     download_user_token_headers: Dict[str, str],
 ) -> None:
-    download_form_data = {
+    download_form_data: Dict[str, Union[int, str]] = {
         "project": "project1",
         "dataset": "dataset1",
         "year": 2020,
