@@ -15,7 +15,9 @@ from app.api.deps import Permission
 router = APIRouter()
 
 
-def write_file_to_local(form, file, settings):
+def write_file_to_local(
+    form: schemas.UploadForm, file: UploadFile, settings: config.Settings
+) -> None:
     file_dir = f"{settings.FILE_ROOT_PATH}/{form.base_dir}"
     file_path = f"{file_dir}/{file.filename}"
     if not os.path.exists(file_dir):
@@ -36,8 +38,8 @@ async def upload_files(
     settings: config.Settings = Depends(deps.get_settings),
     *,
     background_tasks: BackgroundTasks,
-):
-    async def copy_file(file):
+) -> schemas.UploadRecords:
+    async def copy_file(file: UploadFile) -> schemas.UploadRecord:
         background_tasks.add_task(write_file_to_local, form, file, settings)
 
         record = schemas.UploadRecord(
@@ -56,5 +58,5 @@ async def upload_files(
 @router.get("/info", response_model=schemas.UserFromDB)
 async def get_info(
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
-):
+) -> schemas.UserInDB:
     return current_user

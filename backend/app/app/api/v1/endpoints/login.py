@@ -9,6 +9,7 @@ from app.api import deps
 from app.core import security
 from app.core.config import settings
 from app.core.security import get_password_hash
+
 # from app.utils import (
 #    generate_password_reset_token,
 #    send_reset_password_email,
@@ -20,7 +21,7 @@ router = APIRouter()
 
 @router.post("/access-token", response_model=schemas.Token)
 def login_for_access_token(
-    collection=Depends(deps.get_user_collection),
+    collection: Any = Depends(deps.get_user_collection),
     form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> Any:
     """

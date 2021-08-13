@@ -5,6 +5,7 @@ python-multipart
 aiofiles
 pytest
 requests
+types-requests
 fastapi-crudrouter
 fastapi-permissions
 passlib[bcrypt]

@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List
+from typing import Any, List
 
 from fastapi import (
     Header,
@@ -33,16 +33,16 @@ def get_settings() -> config.Settings:
     return config.Settings()
 
 
-def get_db(settings: config.Settings = Depends(get_settings)):
+def get_db(settings: config.Settings = Depends(get_settings)) -> Any:
     return client[settings.MONGO_DB_NAME]
 
 
-def get_user_collection(db=Depends(get_db)):
+def get_user_collection(db: Any = Depends(get_db)) -> Any:
     return db.user
 
 
 # could be used for fine-grained control
-async def verify_content_length(content_length: int = Header(...)):
+async def verify_content_length(content_length: int = Header(...)) -> None:
     if content_length > settings.PAYLOAD_LIMIT:
         raise HTTPException(
             status_code=413,
@@ -50,13 +50,13 @@ async def verify_content_length(content_length: int = Header(...)):
         )
 
 
-async def verify_content_type(content_type: int = Header(...)):
+async def verify_content_type(content_type: int = Header(...)) -> None:
     accepted_types = ["csv", "png"]
     if content_type not in accepted_types:
         raise HTTPException(status_code=400, detail=f"Incorrect file type")
 
 
-async def verify_key(x_api_key: str = Header(...)):
+async def verify_key(x_api_key: str = Header(...)) -> None:
     if x_api_key != "key":
         raise HTTPException(status_code=400, detail="X-Api-Key header invalid")
 
@@ -65,7 +65,7 @@ async def verify_key(x_api_key: str = Header(...)):
 def get_current_user(
     security_scopes: SecurityScopes,
     token: str = Depends(oauth2_scheme),
-    collection=Depends(get_user_collection),
+    collection: Any = Depends(get_user_collection),
 ) -> schemas.UserInDB:
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
@@ -127,7 +127,8 @@ def get_current_active_user_scopes(
         scopes = [Everyone, Authenticated]
         # it may be different for non-dict
         # e.g. getattr(current_user, 'scopes', [])
-        scopes.extend(current_user.get("scopes", []))
+        user_scopes = current_user.get("scopes") or []
+        scopes.extend(user_scopes)
     else:
         # user is not logged in
         scopes = [Everyone]

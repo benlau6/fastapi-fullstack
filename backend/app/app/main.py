@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Request
+from typing import Dict
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import deps
-from app.core.config import settings
 from app.core import config
+from app.core.config import settings
 from app.api.v1.api import router as v1_router
 
 test_file_root_path = "/data/test_files/"
@@ -15,11 +16,11 @@ test_config = config.Settings(
 )
 
 
-def get_settings_override():
+def get_settings_override() -> config.Settings:
     return test_config
 
 
-def create_app(settings) -> FastAPI:
+def create_app(settings: config.Settings) -> FastAPI:
     app = FastAPI(root_path=settings.ROOT_STR)
 
     app.add_middleware(
@@ -38,7 +39,7 @@ def create_app(settings) -> FastAPI:
     app.include_router(v1_router)
 
     @app.get("/status")
-    def read_api_status():
+    def read_api_status() -> Dict[str, str]:
         return {"status": "OK"}
 
     return app

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 
 import pytest
 from fastapi.testclient import TestClient
@@ -38,14 +38,17 @@ def test_get_users_normal_user_me(
 def test_get_existing_user(
     client: TestClient,
     settings: config.Settings,
-    collection,
+    collection: Any,
     superuser_token_headers: Dict[str, str],
 ) -> None:
     email = random_email()
     password = random_lower_string()
     user_in = schemas.UserCreate(email=email, password=password)
     user_id = crud.user.create(collection, document_in=user_in)
-    r = client.get(f"{settings.USERS_URL}/{user_id}", headers=superuser_token_headers,)
+    r = client.get(
+        f"{settings.USERS_URL}/{user_id}",
+        headers=superuser_token_headers,
+    )
     assert 200 <= r.status_code < 300
     found_user = r.json()
     assert found_user

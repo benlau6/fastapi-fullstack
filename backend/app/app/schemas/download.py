@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any, Tuple, List
 
 from pydantic import BaseModel
 from fastapi import Form
@@ -12,7 +13,7 @@ class DownloadQuery(BaseModel):
     month: int = Form(..., ge=1, le=12)
     day: int = Form(..., ge=1, le=31)
 
-    def __acl__(self):
+    def __acl__(self) -> List[Tuple[Any, str, Any]]:
         return [
             (Allow, "role:admin", All),
             (Allow, f"download:{self.project}:all", "submit"),
@@ -20,21 +21,21 @@ class DownloadQuery(BaseModel):
         ]
 
     @property
-    def date_padding_prefix(self):
+    def date_padding_prefix(self) -> str:
         return f"/{self.year}/{self.month:02}/{self.day:02}"
 
     @property
-    def date_prefix(self):
+    def date_prefix(self) -> str:
         return f"/{self.year}/{self.month}/{self.day}"
 
     @property
-    def date_str(self):
+    def date_str(self) -> str:
         return f"{self.year}{self.month:02}{self.day:02}"
 
     @property
-    def zip_filename(self):
+    def zip_filename(self) -> str:
         return f"{self.date_str}_{self.project}_{self.dataset}"
 
     @property
-    def base_dir(self):
+    def base_dir(self) -> str:
         return f"{self.project}/{self.dataset}{self.date_prefix}"

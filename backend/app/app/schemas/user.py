@@ -1,4 +1,4 @@
-from typing import Dict, Optional, List, TypedDict
+from typing import Any, Dict, Optional, List, TypedDict
 
 from pydantic import BaseModel, Field, EmailStr, validator
 from bson.objectid import ObjectId
@@ -20,7 +20,7 @@ class UserBase(BaseModel):
     scopes: Optional[List[Scope]] = None
 
     @validator("email")
-    def email_validate_provider(cls, v):
+    def email_validate_provider(cls, v: EmailStr) -> EmailStr:
         if settings.EMAIL_PROVIDER_RESTRICTION:
             if not any(
                 provider in v for provider in settings.ALLOWED_EMAIL_PROVIDER_LIST
@@ -41,7 +41,7 @@ class UserCreate(UserBase):
     """
 
     @validator("scopes", pre=True, always=True)
-    def set_scopes(cls, v, values):
+    def set_scopes(cls, v: Optional[List[str]], values: Dict[str, Any]) -> List[str]:
         if v is None:
             v = []
         default_scope = "user:" + values["email"]
@@ -66,7 +66,7 @@ class UserToDB(UserBase):
         response_model_by_alias = False
 
     @validator("hashed_password")
-    def hash_password(cls, v):
+    def hash_password(cls, v: str) -> str:
         return get_password_hash(v)
 
 
@@ -90,8 +90,8 @@ class UserCheckScopes(BaseModel):
 # just for type check in crud
 class UserInDB(TypedDict):
     _id: ObjectId
-    email: Optional[EmailStr]
+    email: EmailStr
     hashed_password: str
     is_active: bool
     is_superuser: bool
-    scopes: Optional[List[Scope]]
+    scopes: List[Scope]

@@ -1,4 +1,4 @@
-from typing import Type, List
+from typing import Any, Dict, Generator, Type, List, Union
 import inspect
 
 from fastapi import Form
@@ -6,7 +6,7 @@ from pydantic import BaseModel, constr
 from bson.objectid import ObjectId
 
 
-def as_form(cls: Type[BaseModel]):
+def as_form(cls: Type[BaseModel]) -> Type[BaseModel]:
     new_params = []
     for field in cls.__fields__.values():
         new_params.append(
@@ -34,7 +34,7 @@ def as_form(cls: Type[BaseModel]):
             )
         )
 
-    async def _as_form(**data):
+    async def _as_form(**data: Dict[str, Any]) -> BaseModel:
         return cls(**data)
 
     sig = inspect.signature(_as_form)
@@ -47,17 +47,17 @@ def as_form(cls: Type[BaseModel]):
 
 class PyObjectId(ObjectId):
     @classmethod
-    def __get_validators__(cls):
+    def __get_validators__(cls) -> Generator:
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, v: Union[str, ObjectId]) -> ObjectId:
         if not ObjectId.is_valid(v):
             raise ValueError("Invalid objectid")
         return ObjectId(v)
 
     @classmethod
-    def __modify_schema__(cls, field_schema):
+    def __modify_schema__(cls, field_schema: Dict[str, Any]) -> None:
         field_schema.update(type="string")
 
 

@@ -18,7 +18,7 @@ from fastapi import status
         ("/test-current-active-superuser", "GET"),
     ],
 )
-def test_route_exists(client: TestClient, path: str, method: str):
+def test_route_exists(client: TestClient, path: str, method: str) -> None:
     response = client.request(method, path)
     assert response.status_code not in (
         status.HTTP_404_NOT_FOUND,

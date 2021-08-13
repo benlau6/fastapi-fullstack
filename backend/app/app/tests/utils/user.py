@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pytest
 from fastapi.testclient import TestClient
@@ -9,7 +9,7 @@ from app.tests.utils.utils import random_email, random_lower_string
 
 
 @pytest.fixture
-def principals():
+def principals() -> List[str]:
     return ["role:test"]
 
 
@@ -28,7 +28,8 @@ def get_superuser_token_headers(
 
 
 def get_normal_user_token_headers(
-    client: TestClient, settings: config.Settings,
+    client: TestClient,
+    settings: config.Settings,
 ) -> Dict[str, str]:
     login_data = {
         "username": settings.FIRST_NORMAL_USER,
@@ -42,7 +43,11 @@ def get_normal_user_token_headers(
 
 
 def get_custom_user_token_headers(
-    client: TestClient, settings: config.Settings, collection, *, scopes: List[str],
+    client: TestClient,
+    settings: config.Settings,
+    collection: Any,
+    *,
+    scopes: List[str],
 ) -> Dict[str, str]:
     email = random_email()
     password = random_lower_string()

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 import os
 
 import pytest
@@ -13,7 +13,7 @@ from app.tests.utils.user import get_custom_user_token_headers
 
 @pytest.fixture
 def download_user_token_headers(
-    client: TestClient, settings: config.Settings, collection
+    client: TestClient, settings: config.Settings, collection: Any
 ) -> Dict[str, str]:
     return get_custom_user_token_headers(
         client,
@@ -24,7 +24,8 @@ def download_user_token_headers(
 
 
 def test_get_download_info_no_permission(
-    client: TestClient, settings: config.Settings,
+    client: TestClient,
+    settings: config.Settings,
 ) -> None:
     r = client.get(f"{settings.DOWNLOAD_URL}/info")
     assert 400 <= r.status_code <= 500

@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     #    env_file = '.env'
 
     @property
-    def MONGO_URI(self):
+    def MONGO_URI(self) -> str:
         return f"mongodb://{self.MONGO_USER}:{self.MONGO_PASSWORD}@{self.MONGO_SERVER}:{self.MONGO_PORT}"
 
     @property

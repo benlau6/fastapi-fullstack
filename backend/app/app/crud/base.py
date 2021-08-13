@@ -1,38 +1,38 @@
-from typing import Generic, List, Optional, TypeVar, Union, Tuple, Dict
+from typing import Any, Generic, List, Optional, TypeVar, Union, Tuple, Dict
 from bson.objectid import ObjectId
 
 from pydantic import BaseModel
 
 
-DBModelType = TypeVar("DBModelType", bound=Dict)
+DBModelType = TypeVar("DBModelType", bound=Any)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
 class CRUDBase(Generic[DBModelType, CreateSchemaType, UpdateSchemaType]):
-    def __init__(self, to_db_schema):
+    def __init__(self, to_db_schema: Any):
         """
         CRUD object with default methods to Create, Read, Update, Delete (CRUD).
         """
         self.to_db_schema = to_db_schema
 
-    def get(self, collection, id: Union[str, ObjectId]) -> Optional[DBModelType]:
+    def get(self, collection: Any, id: Union[str, ObjectId]) -> Optional[DBModelType]:
         if isinstance(id, str):
             id = ObjectId(id)
         return collection.find_one({"_id": id})
 
     def get_multi(
-        self, collection, *, skip: int = 0, limit: int = 100
+        self, collection: Any, *, skip: int = 0, limit: int = 100
     ) -> List[DBModelType]:
         return list(collection.find().skip(skip).limit(limit))
 
-    def create(self, collection, document_in: CreateSchemaType) -> ObjectId:
+    def create(self, collection: Any, document_in: CreateSchemaType) -> ObjectId:
         document_to_db = self.to_db_schema(**document_in.dict())
         document_to_db_data = document_to_db.dict()
         return collection.insert_one(document_to_db_data).inserted_id
 
     def update(
-        self, collection, id: Union[str, ObjectId], document_in: UpdateSchemaType
+        self, collection: Any, id: Union[str, ObjectId], document_in: UpdateSchemaType
     ) -> Tuple[int, int]:
         if isinstance(id, str):
             id = ObjectId(id)
@@ -46,7 +46,7 @@ class CRUDBase(Generic[DBModelType, CreateSchemaType, UpdateSchemaType]):
         result = collection.update_one({"_id": id}, {"$set": document_to_db_data})
         return result.matched_count, result.modified_count
 
-    def delete(self, collection, id: Union[str, ObjectId]) -> int:
+    def delete(self, collection: Any, id: Union[str, ObjectId]) -> int:
         if isinstance(id, str):
             id = ObjectId(id)
         result = collection.delete_one({"_id": id})

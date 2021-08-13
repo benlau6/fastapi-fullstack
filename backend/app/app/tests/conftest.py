@@ -1,4 +1,4 @@
-from typing import Generator, List, Optional, Dict
+from typing import Generator, List, Optional, Dict, Any
 import shutil
 import os
 
@@ -29,19 +29,19 @@ test_config = config.Settings(
 )
 
 
-def get_settings_override():
+def get_settings_override() -> config.Settings:
     return test_config
 
 
 # it cannot take fixtures
-def pytest_sessionstart(session):
+def pytest_sessionstart(session: Any) -> None:
     try:
         os.makedirs(test_file_root_path)
     except Exception:
         pass
 
 
-def pytest_sessionfinish(session, exitstatus):
+def pytest_sessionfinish(session: Any, exitstatus: Any) -> None:
     try:
         shutil.rmtree(test_file_root_path)
     except Exception:
@@ -69,7 +69,7 @@ def normal_user_token_headers(
 
 # autouse allows it to drop after all tests, but not right after some tests needing that.
 @pytest.fixture(scope="session", autouse=True)
-def collection(settings: config.Settings):
+def collection(settings: config.Settings) -> Any:
     collection = mongo_client[settings.MONGO_DB_NAME].user
     # init db with super user
     superuser = crud.user.get_by_email(collection, email=settings.FIRST_SUPERUSER)
@@ -95,32 +95,38 @@ def collection(settings: config.Settings):
 
 
 @pytest.fixture
-def app(settings) -> Generator:
+def app(settings: config.Settings) -> Generator:
     main_app = create_app(settings)
     main_app.dependency_overrides[deps.get_settings] = get_settings_override
 
     @main_app.get("/test-current-user", response_model=schemas.UserFromDB)
-    def dummy1(user: schemas.UserFromDB = Depends(deps.get_current_user)):
+    def dummy1(
+        user: schemas.UserFromDB = Depends(deps.get_current_user),
+    ) -> schemas.UserFromDB:
         return user
 
     @main_app.get("/test-current-active-user", response_model=schemas.UserFromDB)
-    def dummy2(user: schemas.UserFromDB = Depends(deps.get_current_active_user)):
+    def dummy2(
+        user: schemas.UserFromDB = Depends(deps.get_current_active_user),
+    ) -> schemas.UserFromDB:
         return user
 
     @main_app.get("/test-current-active-superuser", response_model=schemas.UserFromDB)
-    def dummy3(user: schemas.UserFromDB = Depends(deps.get_current_active_superuser)):
+    def dummy3(
+        user: schemas.UserFromDB = Depends(deps.get_current_active_superuser),
+    ) -> schemas.UserFromDB:
         return user
 
     example_acl = [(Allow, "role:admin", "view")]
 
     @main_app.get("/test-user-permission")
-    def dummy4(acls: list = Permission("view", example_acl)):
+    def dummy4(acls: list = Permission("view", example_acl)) -> Dict[str, str]:
         return {"status": "OK"}
 
     yield main_app
 
 
 @pytest.fixture
-def client(app) -> Generator:
+def client(app: Any) -> Generator:
     with TestClient(app) as c:
         yield c
