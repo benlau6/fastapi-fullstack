@@ -40,6 +40,14 @@ You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/ben
 
 </small>
 
+## Installation
+
+``` bash
+git clone https://github.com/benlau6/fastapi-fullstack.git
+cd fastapi-fullstack
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+```
+
 ## Reference
 
 - Authentication

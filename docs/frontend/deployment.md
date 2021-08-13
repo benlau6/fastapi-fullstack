@@ -7,7 +7,7 @@
 
 Keep the containers running, then run codes below:
 ``` bash
-# git pull https://github.com/benlau6/fastapi-fullstack.git
+# git clone https://github.com/benlau6/fastapi-fullstack.git
 # cd fastapi-fullstack
 # docker-compose up --build
 cd frontend/app

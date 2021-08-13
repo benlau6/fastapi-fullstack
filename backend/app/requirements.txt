@@ -1,13 +1,14 @@
 fastapi
+fastapi-permissions
 pydantic[email, dotenv]
-mypy
+pymongo
 python-multipart
 aiofiles
-pytest
-requests
-types-requests
-fastapi-crudrouter
-fastapi-permissions
 passlib[bcrypt]
 python-jose
-pymongo
+requests
+types-requests
+pytest
+mypy
+black
+pycodestyle

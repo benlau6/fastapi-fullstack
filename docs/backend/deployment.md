@@ -9,7 +9,7 @@
 ## Pull the repository
 
 ``` bash
-git pull https://github.com/benlau6/fastapi-fullstack.git
+git clone https://github.com/benlau6/fastapi-fullstack.git
 cd fastapi-fullstack
 ```
 
