@@ -20,8 +20,8 @@ def test_get_access_token(client: TestClient, settings: config.Settings) -> None
 
 
 def test_use_superuser_access_token(
-    settings: config.Settings,
     client: TestClient,
+    settings: config.Settings,
     superuser_token_headers: Dict[str, str],
 ) -> None:
     r = client.post(
@@ -34,8 +34,8 @@ def test_use_superuser_access_token(
 
 
 def test_use_user_access_token(
-    settings: config.Settings,
     client: TestClient,
+    settings: config.Settings,
     normal_user_token_headers: Dict[str, str],
 ) -> None:
     r = client.post(
@@ -101,3 +101,8 @@ def test_normal_user_permission_by_headers(
     r = client.get("/test-user-permission", headers=normal_user_token_headers)
     assert r.status_code == 403
     assert r.json() == {"detail": "Insufficient permissions"}
+
+
+def test_logout(client: TestClient, settings: config.Settings) -> None:
+    r = client.post(settings.AUTH_URL + "/logout")
+    assert r.status_code == 200

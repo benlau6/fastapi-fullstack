@@ -56,7 +56,7 @@ def test_get_download_file_no_permission(
     download_user_token_headers: Dict[str, str],
 ) -> None:
     # https://github.com/python/mypy/issues/3176
-    download_form_data: Dict[str, Union[int, str]]  = {
+    download_form_data: Dict[str, Union[int, str]] = {
         "project": "project_no_permission",
         "dataset": "dataset1",
         "year": 2020,

@@ -88,7 +88,6 @@ scope_regex = re.compile(r"^[a-z0-9-_]+(:[a-z0-9-_@.]+)+$")
 
 
 class Scope(str):
-    
     @classmethod
     def __get_validators__(cls) -> Generator:
         # one or more validators may be yielded which will be called in the

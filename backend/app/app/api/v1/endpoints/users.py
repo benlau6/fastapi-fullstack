@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Dict, Optional, Tuple
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -19,7 +19,7 @@ def read_users(
     limit: int = 100,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection: Any = Depends(deps.get_user_collection),
-) -> Any:
+) -> List[schemas.UserInDB]:
     """
     Retrieve users.
     """
@@ -51,15 +51,14 @@ def create_user(
     return user
 
 
-@router.put("/me", response_model=schemas.UserFromDB)
+@router.put("/me", response_model=schemas.UpdateResponse)
 def update_user_me(
     *,
     password: str = Body(None),
-    username: str = Body(None),
     email: EmailStr = Body(None),
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
     collection: Any = Depends(deps.get_user_collection),
-) -> Any:
+) -> Tuple[int, int]:
     """
     Update own user.
     """
@@ -76,7 +75,7 @@ def update_user_me(
 @router.get("/me", response_model=schemas.UserFromDB)
 def read_user_me(
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
-) -> Any:
+) -> schemas.UserInDB:
     """
     Get current user.
     """
@@ -114,7 +113,7 @@ def read_user_by_id(
     user_id: str,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
     collection: Any = Depends(deps.get_user_collection),
-) -> Any:
+) -> Optional[schemas.UserInDB]:
     """
     Get a specific user by id.
     """
@@ -135,7 +134,7 @@ def update_user(
     user_in: schemas.UserUpdate,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection: Any = Depends(deps.get_user_collection),
-) -> Any:
+) -> Dict[str, int]:
     """
     Update a user.
     """
@@ -164,7 +163,7 @@ def delete_user(
     user_id: str,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection: Any = Depends(deps.get_user_collection),
-) -> Any:
+) -> Dict[str, int]:
     """
     Delete a user.
     """

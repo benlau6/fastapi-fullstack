@@ -5,7 +5,7 @@ export function login(data) {
   form.append('username', data.username)
   form.append('password', data.password)
   return request({
-    url: '/auth/jwt/login',
+    url: '/auth/login/access-token',
     method: 'post',
     data: form
   })
@@ -20,7 +20,7 @@ export function getInfo() {
 
 export function logout() {
   return request({
-    url: '/auth/cookie/logout',
+    url: '/auth/logout',
     method: 'post'
   })
 }

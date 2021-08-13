@@ -59,11 +59,11 @@ class Settings(BaseSettings):
 
     @property
     def TOKEN_URL(self) -> str:
-        return f"{self.ROOT_STR}{self.API_V1_STR}{self.TOKEN_RESOURCE_STR}"
+        return f"{self.AUTH_URL}{self.TOKEN_RESOURCE_STR}"
 
     @property
     def TOKEN_TEST_URL(self) -> str:
-        return f"{self.ROOT_STR}{self.API_V1_STR}/login/test-token"
+        return f"{self.AUTH_URL}/test-token"
 
     @property
     def USERS_URL(self) -> str:

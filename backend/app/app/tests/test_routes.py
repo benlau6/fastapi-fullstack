@@ -7,7 +7,8 @@ from fastapi import status
     "path,method",
     [
         ("/v1/users", "GET"),
-        ("/v1/login/access-token", "POST"),
+        ("/v1/auth/login/access-token", "POST"),
+        ("/v1/auth/logout", "POST"),
         ("/v1/upload/info", "GET"),
         ("/v1/upload/files", "POST"),
         ("/v1/download/info", "GET"),

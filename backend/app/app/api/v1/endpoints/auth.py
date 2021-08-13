@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any
+from typing import Any, Dict
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -19,11 +19,11 @@ from app.core.security import get_password_hash
 router = APIRouter()
 
 
-@router.post("/access-token", response_model=schemas.Token)
+@router.post("/login/access-token", response_model=schemas.Token)
 def login_for_access_token(
     collection: Any = Depends(deps.get_user_collection),
     form_data: OAuth2PasswordRequestForm = Depends(),
-) -> Any:
+) -> Dict[str, str]:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
@@ -43,8 +43,18 @@ def login_for_access_token(
 
 
 @router.post("/test-token", response_model=schemas.UserFromDB)
-def test_token(current_user: schemas.UserInDB = Depends(deps.get_current_user)) -> Any:
+def test_token(
+    current_user: schemas.UserInDB = Depends(deps.get_current_user),
+) -> schemas.UserInDB:
     """
     Test access token
     """
     return current_user
+
+
+@router.post("/logout", response_model=schemas.Msg)
+def logout() -> Dict[str, str]:
+    """
+    Do nothing, logout at client side
+    """
+    return {"msg": "Logout successful"}
