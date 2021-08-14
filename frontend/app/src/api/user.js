@@ -11,11 +11,11 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
+export function getInfo() {
+  // pass token by authorization headers, which added by service.interceptors.request
   return request({
     url: '/users/me',
-    method: 'get',
-    headers: {'Authorization': 'Bearer ' + token}
+    method: 'get'
   })
 }
 
