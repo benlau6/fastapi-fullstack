@@ -1,13 +1,13 @@
 import { asyncRoutes, constantRoutes } from '@/router'
 
 /**
- * Use meta.principal to determine if the current user has permission
+ * Use meta.scope to determine if the current user has permission
  * @param scopes
  * @param route
  */
 function hasPermission(scopes, route) {
   if (route.meta && route.meta.scopes) {
-    return scopes.some(principal => route.meta.scopes.includes(principal))
+    return scopes.some(scope => route.meta.scopes.includes(scope))
   } else {
     return true
   }

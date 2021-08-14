@@ -11,10 +11,11 @@ export function login(data) {
   })
 }
 
-export function getInfo() {
+export function getInfo(token) {
   return request({
     url: '/users/me',
-    method: 'get'
+    method: 'get',
+    headers: {'Authorization': 'Bearer ' + token}
   })
 }
 
@@ -27,14 +28,14 @@ export function logout() {
 
 export function getUsers() {
   return request({
-    url: '/users',
+    url: '/users/',
     method: 'get'
   })
 }
 
 export function createUser(data) {
   return request({
-    url: '/users',
+    url: '/users/',
     method: 'post',
     data
   })
@@ -50,7 +51,7 @@ export function updateUser(id, data) {
 
 export function deleteUser(id) {
   return request({
-    url: '/users' + id,
+    url: '/users/' + id,
     method: 'delete'
   })
 }

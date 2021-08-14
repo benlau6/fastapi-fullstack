@@ -26,7 +26,7 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_scopes: (state, scopes) => {
+  SET_SCOPES: (state, scopes) => {
     state.scopes = scopes
   }
 }
@@ -38,7 +38,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
-        data.access_token = 'shit'
         commit('SET_TOKEN', data.access_token)
         setToken(data.access_token)
         resolve()
@@ -58,14 +57,14 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { scopes = ['role:admin'], name = data.email, avatar = 'https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png' } = data
+        const { scopes = data.scopes, name = data.email, avatar = 'https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png' } = data
 
         // scopes must be a non-empty array
         if (!scopes || scopes.length <= 0) {
           reject('getInfo: scopes must be a non-null array!')
         }
 
-        commit('SET_scopes', scopes)
+        commit('SET_SCOPES', scopes)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)

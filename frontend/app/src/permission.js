@@ -1,3 +1,4 @@
+  
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
@@ -34,10 +35,10 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           // note: scopes must be a object array! such as: ['role:admin'] or ,['role:developer','role:editor']
-          const { scopes = ['role:admin'] } = store.dispatch('user/getInfo')
+          const { scopes = ['role:admin'] } = await store.dispatch('user/getInfo')
 
           // generate accessible routes map based on scopes
-          const accessRoutes = store.dispatch('permission/generateRoutes', scopes)
+          const accessRoutes = await store.dispatch('permission/generateRoutes', scopes)
 
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
@@ -47,7 +48,7 @@ router.beforeEach(async(to, from, next) => {
           next({ ...to, replace: true })
         } catch (error) {
           // remove token and go to login page to re-login
-          store.dispatch('user/resetToken')
+          await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()

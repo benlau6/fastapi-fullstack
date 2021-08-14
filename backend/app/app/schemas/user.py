@@ -41,7 +41,7 @@ class UserCreate(UserBase):
     """
 
     @validator("scopes", pre=True, always=True)
-    def set_scopes(cls, v: Optional[List[str]], values: Dict[str, Any]) -> List[str]:
+    def SET_SCOPES(cls, v: Optional[List[str]], values: Dict[str, Any]) -> List[str]:
         if v is None:
             v = []
         default_scope = "user:" + values["email"]
