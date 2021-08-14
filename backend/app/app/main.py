@@ -7,18 +7,6 @@ from app.core import config
 from app.core.config import settings
 from app.api.v1.api import router as v1_router
 
-test_file_root_path = "/data/test_files/"
-test_mongo_db_name = "test"
-# ROOT_STR = '' because inside the container, there is no proxy,
-# then the original routes are mounted with no root str
-test_config = config.Settings(
-    MONGO_DB_NAME=test_mongo_db_name, ROOT_STR="", FILE_ROOT_PATH=test_file_root_path
-)
-
-
-def get_settings_override() -> config.Settings:
-    return test_config
-
 
 def create_app(settings: config.Settings) -> FastAPI:
     app = FastAPI(root_path=settings.ROOT_STR)
