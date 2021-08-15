@@ -11,9 +11,15 @@
     </div>
 
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="80">
+      <el-table-column align="center" label="Index" width="80">
         <template slot-scope="scope">
           {{ scope.$index }}
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="ID" width="160">
+        <template slot-scope="scope">
+          {{ scope.row._id }}
         </template>
       </el-table-column>
 
@@ -92,7 +98,7 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        true: 'grey',
+        true: 'success',
         false: 'info'
       }
       return statusMap[status]
@@ -129,7 +135,7 @@ export default {
         message: '操作Success',
         type: 'success'
       })
-      await updateUser(row.id, { 'is_active': status })
+      await updateUser(row._id, { 'is_active': status })
     },
     handleCreate() {
       this.resetTemp()
@@ -190,7 +196,7 @@ export default {
         type: 'success',
         duration: 2000
       })
-      await deleteUser(row.id)
+      await deleteUser(row._id)
       this.list.splice(index, 1)
     }
   }

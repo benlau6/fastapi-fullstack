@@ -12,7 +12,7 @@ from app.core.config import settings
 
 router = APIRouter()
 
-
+# add response_model_by_alias = False fter response_model to change _id to id, but openapi wont get it
 @router.get("/", response_model=List[schemas.UserFromDB])
 def read_users(
     skip: int = 0,

@@ -8,9 +8,14 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" width="95">
+      <el-table-column align="center" label="Index" width="80">
         <template slot-scope="scope">
           {{ scope.$index }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="ID" width="160">
+        <template slot-scope="scope">
+          {{ scope.row._id }}
         </template>
       </el-table-column>
       <el-table-column label="Email">
@@ -45,7 +50,7 @@ export default {
     statusFilter(status) {
       const statusMap = {
         // success as green, grey as blue, danger as red
-        true: 'grey',
+        true: 'success',
         false: 'info'
       }
       return statusMap[status]
