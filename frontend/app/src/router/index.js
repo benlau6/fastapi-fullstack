@@ -96,16 +96,9 @@ export const asyncRoutes = [
     meta: { title: 'Admin', icon: 'table' },
     children: [
       {
-        path: 'show',
-        name: 'Show',
+        path: 'index',
         component: () => import('@/views/admin/index'),
-        meta: { title: 'Show', icon: 'table' }
-      },
-      {
-        path: 'edit',
-        name: 'Edit',
-        component: () => import('@/views/admin/editable-table'),
-        meta: { title: 'Edit', icon: 'table' }
+        meta: { title: 'Admin', icon: 'table' }
       }
     ]
   },
