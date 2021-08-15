@@ -164,7 +164,6 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -176,7 +175,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           updateUser(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
+            const index = this.list.findIndex(v => v._id === this.temp._id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({

@@ -59,11 +59,10 @@ class UserUpdate(UserBase):
 
 # Additional properties stored in DB
 class UserToDB(UserBase):
-    hashed_password: str = Field(alias="password")
+    hashed_password: Optional[str] = Field(None, alias="password")
 
     class Config:
         allow_population_by_field_name = True
-        response_model_by_alias = False
 
     @validator("hashed_password")
     def hash_password(cls, v: str) -> str:

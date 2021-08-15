@@ -51,7 +51,7 @@ def create_user(
     return user
 
 
-@router.put("/me", response_model=schemas.UpdateResponse)
+@router.patch("/me", response_model=schemas.UpdateResponse)
 def update_user_me(
     *,
     password: str = Body(None),
@@ -127,7 +127,7 @@ def read_user_by_id(
     return user
 
 
-@router.put("/{user_id}", response_model=schemas.UpdateResponse)
+@router.patch("/{user_id}", response_model=schemas.UpdateResponse)
 def update_user(
     *,
     user_id: str,
