@@ -13,7 +13,7 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="ID" width="160">
+      <el-table-column align="center" label="ID" width="240">
         <template slot-scope="scope">
           {{ scope.row._id }}
         </template>
@@ -26,11 +26,6 @@
       <el-table-column class-name="status-col" label="Activated" width="110" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.is_active | statusFilter">{{ scope.row.is_active }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="Verified" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.is_verified | statusFilter">{{ scope.row.is_verified }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="Superuser" width="110" align="center">

@@ -26,10 +26,21 @@ export function logout() {
   })
 }
 
-export function getUsers() {
+export function getUsers(query) {
+  let params = {
+    'limit': query.limit,
+    'skip': (query.page-1) * query.limit,
+  }
+  if (query.email) {
+    params.q = {
+      email: query.email
+    }
+  }
+
   return request({
     url: '/users/',
-    method: 'get'
+    method: 'get',
+    params: params
   })
 }
 

@@ -22,9 +22,14 @@ class CRUDBase(Generic[DBModelType, CreateSchemaType, UpdateSchemaType]):
         return collection.find_one({"_id": id})
 
     def get_multi(
-        self, collection: Any, *, skip: int = 0, limit: int = 100
+        self,
+        collection: Any,
+        *,
+        q: Optional[Dict[str, Any]],
+        skip: int = 0,
+        limit: int = 100
     ) -> List[DBModelType]:
-        return list(collection.find().skip(skip).limit(limit))
+        return list(collection.find(q).skip(skip).limit(limit))
 
     def create(self, collection: Any, document_in: CreateSchemaType) -> ObjectId:
         document_to_db = self.to_db_schema(**document_in.dict())

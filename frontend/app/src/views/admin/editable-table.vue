@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Email" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-input v-model="listQuery.email" placeholder="Email" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
@@ -17,7 +17,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="ID" width="160">
+      <el-table-column align="center" label="ID" width="240">
         <template slot-scope="scope">
           {{ scope.row._id }}
         </template>
@@ -51,38 +51,18 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="is_verified" width="110">
-        <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-input v-model="row.is_verified" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
-              cancel
-            </el-button>
-          </template>
-          <el-tag :type="row.is_verified | statusFilter">
-            {{ row.is_verified }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
       <el-table-column label="Actions" align="center" width="360" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,true)">
+          <el-button v-if="row.is_active!=true" size="mini" type="success" @click="handleModifyStatus(row,true)">
             Activate
           </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,false)">
+          <el-button v-if="row.is_active!=false" size="mini" @click="handleModifyStatus(row,false)">
             Deactivate
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
             Delete
           </el-button>
         </template>

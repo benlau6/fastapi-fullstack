@@ -41,7 +41,9 @@ class UserCreate(UserBase):
     """
 
     @validator("scopes", pre=True, always=True)
-    def scopes_validate_default_value(cls, v: Optional[List[str]], values: Dict[str, Any]) -> List[str]:
+    def scopes_validate_default_value(
+        cls, v: Optional[List[str]], values: Dict[str, Any]
+    ) -> List[str]:
         if v is None:
             v = []
         default_scope = "user:" + values["email"]
@@ -75,12 +77,13 @@ class UserFromDB(UserBase):
     id: Optional[PyObjectId] = Field(None, alias="_id")
 
     class Config:
-        '''
+        """
         Reference: https://pydantic-docs.helpmanual.io/usage/model_config/
         allow_population_by_field_name: whether an aliased field may be populated by its name as given by the model attribute, as well as the alias
         arbitrary_types_allowed: If False, RuntimeError will be raised on model declaration if the value is not an instance of the type
         json_encoders: a dict used to customise the way types are encoded to JSON
-        '''
+        """
+
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}

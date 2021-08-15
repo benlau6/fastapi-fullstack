@@ -1,9 +1,11 @@
-from typing import Any, List, Dict, Optional, Tuple
+from typing import Any, List, Dict, Optional, Tuple, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import EmailStr
 from bson import ObjectId
+import json
+
 
 from app import crud, schemas
 from app.api import deps
@@ -12,18 +14,33 @@ from app.core.config import settings
 
 router = APIRouter()
 
+
+async def common_parameters(
+    q: Optional[str] = None, skip: int = 0, limit: int = 100
+) -> Dict[str, Union[int, dict, None]]:
+    if q is not None:
+        q_dict: dict = json.loads(q)
+        if "email" in q_dict:
+            q_dict["email"] = {"$regex": q_dict["email"]}
+        return {"q": q_dict, "skip": skip, "limit": limit}
+
+    return {"q": None, "skip": skip, "limit": limit}
+
+
 # add response_model_by_alias = False fter response_model to change _id to id, but openapi wont get it
 @router.get("/", response_model=List[schemas.UserFromDB])
 def read_users(
-    skip: int = 0,
-    limit: int = 100,
+    commons: dict = Depends(common_parameters),
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
     collection: Any = Depends(deps.get_user_collection),
 ) -> List[schemas.UserInDB]:
     """
     Retrieve users.
     """
-    users = crud.user.get_multi(collection, skip=skip, limit=limit)
+    print(commons["q"], flush=True)
+    users = crud.user.get_multi(
+        collection, q=commons["q"], skip=commons["skip"], limit=commons["limit"]
+    )
     return users
 
 
