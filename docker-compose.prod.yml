@@ -2,9 +2,6 @@ version: '3.8'
 # it overrides, so make sure to change the variables declared in .yml, which are unwanted in prod.yml
 # https://docs.docker.com/compose/extends/#different-environments
 services:
-  reverse-proxy:
-    networks:
-      - frontend
   api:
     build:
         context: ./backend
@@ -13,14 +10,3 @@ services:
     build:
         context: ./frontend
         dockerfile: Dockerfile.prod
-    ports:
-      - 9528
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.frontend.loadbalancer.server.port=9528
-      - traefik.http.routers.frontend.entrypoints=http
-      - traefik.http.routers.frontend.rule=Host(`127.0.0.1`)
-    networks:
-      - frontend
-networks:
-  frontend:
