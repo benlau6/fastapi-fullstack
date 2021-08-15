@@ -8,35 +8,31 @@ A FastAPI project template with CRUD, authentication, authorization, documentati
 
 ## Features
 
-- [X] Authentication with registration, login, password reset and email verification 
+- [X] User system
 - [X] Authorization per user, per row, per route
-- [X] ORM support
-- [X] JWT and cookie authentication backends
-- [X] Quick CRUD endpoints creation
+- [X] JWT authentication
 - [X] Automatic OpenAPI documentation
-- [X] Test Automation
+- [X] Test automation
+- [X] Type checking
 - [X] Vue frontend
 
 ## Thanks to
 
 - [fastapi](https://github.com/tiangolo/fastapi) ([doc](https://fastapi.tiangolo.com/)) for one of the best api framework in python. Don't skip the doc if you just knew it. It is perfectly written.
-- [fastapi-users](https://github.com/frankie567/fastapi-users) ([doc](https://frankie567.github.io/fastapi-users/)) for comprehensive user model.
 - [fastapi-permission](https://github.com/holgi/fastapi-permissions) ([doc](https://github.com/holgi/fastapi-permissions/blob/master/README.md)) for row-based security control.
-- [fastapi-crudrouter](https://github.com/awtkns/fastapi-crudrouter) ([doc](https://fastapi-crudrouter.awtkns.com/)) for quick crud development.
-- [tortoise-orm](https://github.com/tortoise/tortoise-orm) ([doc](https://tortoise-orm.readthedocs.io/en/latest/)) for database orm, you can switch to any other orms for new features without any problems. However, if you want to switch it for features in use, e.g. fastapi-users and fastapi-permission. Re-configuration of pytest is needed.
-- [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
-- [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin))
+- [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
+- [pymongo](https://github.com/mongodb/mongo-python-driver) ([doc](https://pymongo.readthedocs.io/en/stable/tutorial.html)) for connecting MongoDB
+- [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
+- [pydantic](https://github.com/samuelcolvin/pydantic/) ([doc](https://pydantic-docs.helpmanual.io/)) for data validation
+- [pycodestyle](https://github.com/PyCQA/pycodestyle) for python style checking
+- [black](https://github.com/psf/black) for automatic PEP8 formatting
+- [mypy](https://github.com/python/mypy) ([doc](https://mypy.readthedocs.io/en/stable/)) for type checking
+
 
 <small>
 
-Some fastapi third party libraries are selected because they earned many stars, well developed and maintained. 
-Many new features could be added in without any efforts. But most of the features you may use can acutally be rebuilt with only some efforts. 
-So if for educational purpose, to know what had been done, or for full control in workflow, to set what should be done, I recommend to build from scratch with only FastAPI. 
-
-You may want to check [fastapi-mongo-oauth](https://github.com/benlau6/fastapi-mongo-oauth), which is built from scratch with mongo.
-
-You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) for using FastAPI on AWS or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for better project file structure
+You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/benlau6/fastapi-pynamodb-lambda-simple.git) or [fastapi-pynamodb-lambda-versioning](https://github.com/benlau6/fastapi-pynamodb-lambda-versioning) for using FastAPI on AWS
 
 </small>
 
@@ -47,6 +43,11 @@ git clone https://github.com/benlau6/fastapi-fullstack.git
 cd fastapi-fullstack
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 ```
+
+## Play it
+
+- Backend: Browse <http://127.0.0.1/api/docs>
+- Frontend: Browse <http://127.0.0.1>
 
 ## Reference
 

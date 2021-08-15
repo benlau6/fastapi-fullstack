@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import EmailStr
 from bson import ObjectId
-import json
+import orjson
 
 
 from app import crud, schemas
@@ -19,7 +19,7 @@ async def common_parameters(
     q: Optional[str] = None, skip: int = 0, limit: int = 100
 ) -> Dict[str, Union[int, dict, None]]:
     if q is not None:
-        q_dict: dict = json.loads(q)
+        q_dict: dict = orjson.loads(q)
         if "email" in q_dict:
             q_dict["email"] = {"$regex": q_dict["email"]}
         return {"q": q_dict, "skip": skip, "limit": limit}

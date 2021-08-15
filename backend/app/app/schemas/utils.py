@@ -4,7 +4,7 @@ import re
 
 from fastapi import Form
 from pydantic import BaseModel, constr
-from bson.objectid import ObjectId
+from bson import ObjectId
 
 from typing import Protocol, TypeVar, Callable, Optional, cast
 
