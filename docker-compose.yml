@@ -24,7 +24,6 @@ services:
       # Enable the Traefik log, for configurations and errors
       - --log
       # Enable the Dashboard and API
-      #- --api
       - --api.insecure=true
   api:
     build: ./backend
@@ -61,7 +60,7 @@ services:
     ports:
       - 27017
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_USERNAME=admin # MongoDB admin username
       - MONGO_INITDB_ROOT_PASSWORD=password
     networks:
       - backend
@@ -77,14 +76,14 @@ services:
     networks:
       - backend
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb
+      # Ref: https://hub.docker.com/_/mongo-express
+      - ME_CONFIG_MONGODB_SERVER=mongodb # MongoDB container name
       - ME_CONFIG_MONGODB_PORT=27017
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin # MongoDB admin username
       - ME_CONFIG_MONGODB_ADMINPASSWORD=password
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_USERNAME=admin # mongo-express web username
       - ME_CONFIG_BASICAUTH_PASSWORD=password
-      - ME_CONFIG_SITE_BASEURL=/mongoadmin
+      - ME_CONFIG_SITE_BASEURL=/mongoadmin/ # baseurl for mongo-express web
     labels:
       - traefik.enable=true
       - traefik.http.services.mongo-express.loadbalancer.server.port=8081
