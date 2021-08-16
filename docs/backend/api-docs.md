@@ -5,8 +5,8 @@
 
 ## Runnable doc
 
-Goto <http://127.0.0.1/api/docs>
+Browse <http://127.0.0.1/api/docs>
 
 ## Printable doc
 
-Goto <http://127.0.0.1/api/redoc>
+Browse <http://127.0.0.1/api/redoc>

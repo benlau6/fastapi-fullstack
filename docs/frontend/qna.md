@@ -1,22 +1,8 @@
 # Q&A
 
-!!! question "Set-cookies not working?"
-??? solution
-    === "Solution 1"
-        src/utils/auth.js -> set **const TokenKey = 'fastapiusersauth'**
-    === "Solution 2"
-        1. (fastapi) api/fastapi_users_utils.py -> set **CookieAuthentication(..., cookie_samesite='None')**
-        2. src/utils/requests.js -> axios set **withCredentials: true** 
-        ``` python
-        const service = axios.create({
-        baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-        withCredentials: true, // send cookies when cross-domain requests
-        timeout: 5000 // request timeout
-        })
-        ```
 !!! question "JWT auth not working?"
 ??? solution
-    src/utils/requests.js -> request interceptor set **config.headers['Authorization'] = 'Bearer ' + getToken()**
+    (frontend) app/src/utils/requests.js -> request interceptor set **config.headers['Authorization'] = 'Bearer ' + getToken()**
     ``` python
     service.interceptors.request.use(
     ...
@@ -33,7 +19,9 @@
 !!! question "Backend response format not matching?"
 ??? solution
     === "Solution 1"
-        src/utils/requests.js -> response interceptor set **const res = {...}** 
+        (backend) Change your response_model schemas in app/app/api/schemas
+    === "Solution 2"
+        (frontend) app/src/utils/requests.js -> response interceptor set **const res = {...}** 
         ``` python
         service.interceptors.response.use(
         ...
@@ -47,8 +35,8 @@
             }
         ...
         ```
-    === "Solution 2"
-        (fastapi) app/main.py -> add middleware to handle response
+    === "Solution 3"
+        (backend) app/app/main.py -> add middleware to handle response
         ``` python
         # it formatted response, but openapi crashed
         import json
@@ -101,6 +89,52 @@
             
             return response
         ```
-!!! question "Permission not stated as 'roles' in response body?"
+
+!!! question "Cookie is not stored?"
 ??? solution
-    ++ctrl+f++ to find 'roles', replace some of them carefully
+    === "Solution 1 - cookie size"
+        (backend) Ensure cookie body is not larger than 4kb, otherwise use sessionStorage instead at app/src/utils/auth.js
+         ``` javascript
+         export function getToken() {
+         return sessionStorage.getItem(TokenKey)
+         }
+
+         export function setToken(token) {
+         return sessionStorage.setItem(TokenKey, token)
+         }
+
+         export function removeToken() {
+         return sessionStorage.removeItem(TokenKey)
+         }
+         ```
+    === "Solution 2 - with reverse proxy"
+        Check your host, port configs in traefik, frontend, backend
+    === "Solution 3 - without reverse proxy"
+        1. (backend) Enable CORSMiddleware at app/app/main.py
+            ``` python
+            # to enable Access-Control-Allow-Credentials
+            # to enable Access-Control-Allow-Origin for frontend origin
+            # P.S. Origin is only considered to be the same if the protocol, host and port is the same
+            # Ref. https://www.w3.org/Security/wiki/Same_Origin_Policy
+            app.add_middleware(
+                CORSMiddleware,
+                allow_origins=[
+                    'http://localhost:9528',
+                    'http://127.0.0.1:9528'
+                    ],
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
+            )
+            ```
+        2. (frontend) Enable axios withCredentials at app/src/utils/request.js
+            ``` javascript
+            const service = axios.create({
+                baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+                withCredentials: true, // send cookies when cross-domain requests
+                timeout: 5000 // request timeout
+                })
+            ```
+    === "Solution 4 - using fastapi-users"
+        1. (frontend) app/src/utils/auth.js -> set **const TokenKey = 'fastapiusersauth'**
+        2. (fastapi-users) set **CookieAuthentication(..., cookie_samesite='None')**
