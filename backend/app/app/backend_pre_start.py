@@ -11,7 +11,7 @@ def init() -> None:
     try:
         dbs = client.list_database_names()
         logger.info(dbs)
-    except Exception as e:  
+    except Exception as e:
         logger.error(e)
         raise e
 

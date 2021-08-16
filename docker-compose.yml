@@ -8,6 +8,7 @@ services:
       - 8080:8080
     networks:
       - backend
+      - frontend
     volumes:
       # Add Docker as a mounted volume, so that Traefik can read the labels of other services
       - /var/run/docker.sock:/var/run/docker.sock
@@ -33,6 +34,10 @@ services:
     volumes:
       - ./data/files:/data/files
       - ./data/db:/data/db 
+    networks:
+      - backend
+    depends_on:
+      - mongodb
     environment: 
       # check for env: https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
       - PORT=3000
@@ -50,10 +55,6 @@ services:
       - traefik.http.middlewares.sizelimit.buffering.maxRequestBodyBytes=200000000
       # Apply middlewares
       - traefik.http.routers.api.middlewares=api-stripprefix@docker,sizelimit@docker
-    networks:
-      - backend
-    depends_on:
-      - mongodb
   mongodb:
     image: mongo
     restart: always
@@ -64,16 +65,17 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=password
     networks:
       - backend
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
   mongo-express:
     image: mongo-express
     ports:
       - 8081
     restart: unless-stopped
+    volumes: 
+      - mongodb-data:/data/db  
+    depends_on:
+      - mongodb
+    networks:
+      - backend
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb
       - ME_CONFIG_MONGODB_PORT=27017
@@ -83,20 +85,24 @@ services:
       - ME_CONFIG_BASICAUTH_USERNAME=admin
       - ME_CONFIG_BASICAUTH_PASSWORD=password
       - ME_CONFIG_SITE_BASEURL=/mongoadmin
-    volumes: 
-      - mongodb-data:/data/db  
-    depends_on:
-      - mongodb
-    networks:
-      - backend
     labels:
       - traefik.enable=true
       - traefik.http.services.mongo-express.loadbalancer.server.port=8081
       - traefik.http.routers.mongo-express.entrypoints=http
       - traefik.http.routers.mongo-express.rule=Host(`127.0.0.1`) && PathPrefix(`/mongoadmin`)
-      #- traefik.http.middlewares.mongo-express-stripprefix.stripprefix.prefixes=/admin
-      #- traefik.http.routers.mongo-express.middlewares=mongo-express-stripprefix@docker
+  frontend:
+    build: ./frontend
+    ports:
+      - 9528
+    networks:
+      - frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.frontend.loadbalancer.server.port=9528
+      - traefik.http.routers.frontend.entrypoints=http
+      - traefik.http.routers.frontend.rule=Host(`127.0.0.1`)
 volumes:
   mongodb-data:
 networks:
   backend:
+  frontend:

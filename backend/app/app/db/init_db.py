@@ -1,8 +1,9 @@
+from typing import Any
 from app import crud, schemas
 from app.core.config import settings
 
 
-def init_db(collection) -> None:
+def init_db(collection: Any) -> None:
     user = crud.user.get_by_email(collection, email=settings.FIRST_SUPERUSER)
     if not user:
         user_in = schemas.UserCreate(

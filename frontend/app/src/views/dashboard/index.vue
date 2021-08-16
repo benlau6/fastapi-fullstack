@@ -4,7 +4,7 @@
     <br>
     <div class="dashboard-text">
       permissions: [<br>
-      <ul v-for="principal in principals" :key="principal">{{ principal }}</ul>
+      <ul v-for="principal in scopes" :key="principal">{{ principal }}</ul>
       ]
     </div>
   </div>
@@ -18,7 +18,7 @@ export default {
   computed: {
     ...mapGetters([
       'name',
-      'principals'
+      'scopes'
     ])
   }
 }

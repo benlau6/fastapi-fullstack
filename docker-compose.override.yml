@@ -2,6 +2,12 @@ version: '3.8'
 services:
   api:
     command:
-      - /start-reload.sh # for dev
+      - /start-reload.sh # for hot reload
     volumes:
-      - ./backend/app:/app # for dev
+      - ./backend/app:/app # for hot reload
+  frontend:
+    volumes:
+      - ./frontend/app:/app # for hot reload
+      - /app/node_modules # for much faster hot reload
+    environment: 
+      - CHOKIDAR_USEPOLLING=true # for hot reload

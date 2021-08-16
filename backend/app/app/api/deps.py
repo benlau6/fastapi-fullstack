@@ -1,13 +1,13 @@
 from functools import lru_cache
-from typing import List
+from typing import Any, List
 
 from fastapi import (
     Header,
     Body,
-    Depends, 
+    Depends,
     Security,
-    HTTPException, 
-    status, 
+    HTTPException,
+    status,
 )
 from fastapi.security import (
     OAuth2PasswordBearer,
@@ -27,43 +27,45 @@ from app.db.mongo import client
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.TOKEN_URL)
 
 
-############# settings ###########
+# settings
 @lru_cache
 def get_settings() -> config.Settings:
     return config.Settings()
 
 
-def get_db(settings: config.Settings = Depends(get_settings)):
+def get_db(settings: config.Settings = Depends(get_settings)) -> Any:
     return client[settings.MONGO_DB_NAME]
 
 
-def get_user_collection(db = Depends(get_db)):
+def get_user_collection(db: Any = Depends(get_db)) -> Any:
     return db.user
-    
 
-##################################
+
 # could be used for fine-grained control
-async def verify_content_length(content_length: int = Header(...)):
+async def verify_content_length(content_length: int = Header(...)) -> None:
     if content_length > settings.PAYLOAD_LIMIT:
-        raise HTTPException(status_code=413, detail=f"Error, please make sure the files are smaller than {settings.PAYLOAD_LIMIT}")
+        raise HTTPException(
+            status_code=413,
+            detail=f"Error, please make sure the files are smaller than {settings.PAYLOAD_LIMIT}",
+        )
 
 
-async def verify_content_type(content_type: int = Header(...)):
-    accepted_types = ['csv', 'png']
+async def verify_content_type(content_type: int = Header(...)) -> None:
+    accepted_types = ["csv", "png"]
     if content_type not in accepted_types:
         raise HTTPException(status_code=400, detail=f"Incorrect file type")
 
 
-async def verify_key(x_api_key: str = Header(...)):
+async def verify_key(x_api_key: str = Header(...)) -> None:
     if x_api_key != "key":
         raise HTTPException(status_code=400, detail="X-Api-Key header invalid")
 
 
-############ user #############
+# user
 def get_current_user(
     security_scopes: SecurityScopes,
     token: str = Depends(oauth2_scheme),
-    collection = Depends(get_user_collection),
+    collection: Any = Depends(get_user_collection),
 ) -> schemas.UserInDB:
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
@@ -75,11 +77,13 @@ def get_current_user(
         headers={"WWW-Authenticate": authenticate_value},
     )
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[security.ALGORITHM])
-        _id: str = payload.get('sub')
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
+        )
+        _id: str = payload.get("sub")
         if _id is None:
             raise credentials_exception
-        token_scopes = payload.get('scopes', [])
+        token_scopes = payload.get("scopes", [])
         token_data = schemas.TokenData(scopes=token_scopes, id=_id)
     except (jwt.JWTError, ValidationError):
         raise credentials_exception
@@ -98,7 +102,7 @@ def get_current_user(
 
 
 def get_current_active_user(
-    current_user: schemas.UserInDB = Depends(get_current_user)
+    current_user: schemas.UserInDB = Depends(get_current_user),
 ) -> schemas.UserInDB:
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -106,7 +110,7 @@ def get_current_active_user(
 
 
 def get_current_active_superuser(
-    current_user: schemas.UserInDB = Depends(get_current_user)
+    current_user: schemas.UserInDB = Depends(get_current_user),
 ) -> schemas.UserInDB:
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
@@ -115,17 +119,21 @@ def get_current_active_superuser(
     return current_user
 
 
-def get_current_active_user_scopes(current_user: schemas.UserInDB = Depends(get_current_active_user)) -> List:
+def get_current_active_user_scopes(
+    current_user: schemas.UserInDB = Depends(get_current_active_user),
+) -> List:
     if current_user is not None:
         # user is logged in
         scopes = [Everyone, Authenticated]
         # it may be different for non-dict
         # e.g. getattr(current_user, 'scopes', [])
-        scopes.extend(current_user.get('scopes', []))
+        user_scopes = current_user.get("scopes") or []
+        scopes.extend(user_scopes)
     else:
         # user is not logged in
         scopes = [Everyone]
     return scopes
+
 
 # Permission is already wrapped in Depends()
 Permission = configure_permissions(get_current_active_user_scopes)

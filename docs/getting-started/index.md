@@ -1,4 +1,4 @@
-# Getting Started
+# Deployment
 
 !!! note
     All project development, testing, and deployment are done in windows10/11. docker-compose\*.yml may need to be changed for linux/mac environment
@@ -9,7 +9,7 @@
 ## Pull the repository
 
 ``` bash
-git pull https://github.com/benlau6/fastapi-fullstack.git
+git clone https://github.com/benlau6/fastapi-fullstack.git
 cd fastapi-fullstack
 ```
 

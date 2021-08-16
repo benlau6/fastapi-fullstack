@@ -7,7 +7,7 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    principals: []
+    scopes: []
   }
 }
 
@@ -26,8 +26,8 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_principals: (state, principals) => {
-    state.principals = principals
+  SET_SCOPES: (state, scopes) => {
+    state.scopes = scopes
   }
 }
 
@@ -57,14 +57,14 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { principals = ['role:admin'], name = data.email, avatar = 'https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png' } = data
+        const { scopes = data.scopes, name = data.email, avatar = 'https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png' } = data
 
-        // principals must be a non-empty array
-        if (!principals || principals.length <= 0) {
-          reject('getInfo: principals must be a non-null array!')
+        // scopes must be a non-empty array
+        if (!scopes || scopes.length <= 0) {
+          reject('getInfo: scopes must be a non-null array!')
         }
 
-        commit('SET_principals', principals)
+        commit('SET_SCOPES', scopes)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)

@@ -8,5 +8,3 @@ def random_lower_string() -> str:
 
 def random_email() -> str:
     return f"{random_lower_string()}@test.com"
-
-

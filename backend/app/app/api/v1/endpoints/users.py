@@ -1,9 +1,11 @@
-from typing import Any, List
+from typing import Any, List, Dict, Optional, Tuple, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import EmailStr
 from bson import ObjectId
+import orjson
+
 
 from app import crud, schemas
 from app.api import deps
@@ -13,17 +15,32 @@ from app.core.config import settings
 router = APIRouter()
 
 
+async def common_parameters(
+    q: Optional[str] = None, skip: int = 0, limit: int = 100
+) -> Dict[str, Union[int, dict, None]]:
+    if q is not None:
+        q_dict: dict = orjson.loads(q)
+        if "email" in q_dict:
+            q_dict["email"] = {"$regex": q_dict["email"]}
+        return {"q": q_dict, "skip": skip, "limit": limit}
+
+    return {"q": None, "skip": skip, "limit": limit}
+
+
+# add response_model_by_alias = False fter response_model to change _id to id, but openapi wont get it
 @router.get("/", response_model=List[schemas.UserFromDB])
 def read_users(
-    skip: int = 0,
-    limit: int = 100,
+    commons: dict = Depends(common_parameters),
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
-) -> Any:
+    collection: Any = Depends(deps.get_user_collection),
+) -> List[schemas.UserInDB]:
     """
     Retrieve users.
     """
-    users = crud.user.get_multi(collection, skip=skip, limit=limit)
+    print(commons["q"], flush=True)
+    users = crud.user.get_multi(
+        collection, q=commons["q"], skip=commons["skip"], limit=commons["limit"]
+    )
     return users
 
 
@@ -32,7 +49,7 @@ def create_user(
     *,
     user_in: schemas.UserCreate,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
+    collection: Any = Depends(deps.get_user_collection),
 ) -> Any:
     """
     Create new user.
@@ -44,22 +61,21 @@ def create_user(
             detail="The user with this username already exists in the system.",
         )
     user = crud.user.create(collection, document_in=user_in)
-    #if settings.EMAILS_ENABLED and user_in.email:
+    # if settings.EMAILS_ENABLED and user_in.email:
     #    send_new_account_email(
     #        email_to=user_in.email, username=user_in.email, password=user_in.password
     #    )
     return user
 
 
-@router.put("/me", response_model=schemas.UserFromDB)
+@router.patch("/me", response_model=schemas.UpdateResponse)
 def update_user_me(
     *,
     password: str = Body(None),
-    username: str = Body(None),
     email: EmailStr = Body(None),
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
-    collection = Depends(deps.get_user_collection),
-) -> Any:
+    collection: Any = Depends(deps.get_user_collection),
+) -> Tuple[int, int]:
     """
     Update own user.
     """
@@ -69,14 +85,14 @@ def update_user_me(
         user_in.password = password
     if email is not None:
         user_in.email = email
-    user = crud.user.update(collection, id=current_user['_id'], document_in=user_in)
+    user = crud.user.update(collection, id=current_user["_id"], document_in=user_in)
     return user
 
 
 @router.get("/me", response_model=schemas.UserFromDB)
 def read_user_me(
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
-) -> Any:
+) -> schemas.UserInDB:
     """
     Get current user.
     """
@@ -88,7 +104,7 @@ def create_user_open(
     *,
     email: EmailStr = Body(...),
     password: str = Body(...),
-    collection = Depends(deps.get_user_collection),
+    collection: Any = Depends(deps.get_user_collection),
 ) -> Any:
     """
     Create new user without the need to be logged in.
@@ -113,8 +129,8 @@ def create_user_open(
 def read_user_by_id(
     user_id: str,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_user),
-    collection = Depends(deps.get_user_collection),
-) -> Any:
+    collection: Any = Depends(deps.get_user_collection),
+) -> Optional[schemas.UserInDB]:
     """
     Get a specific user by id.
     """
@@ -128,14 +144,14 @@ def read_user_by_id(
     return user
 
 
-@router.put("/{user_id}", response_model=schemas.UpdateResponse)
+@router.patch("/{user_id}", response_model=schemas.UpdateResponse)
 def update_user(
     *,
     user_id: str,
     user_in: schemas.UserUpdate,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
-) -> Any:
+    collection: Any = Depends(deps.get_user_collection),
+) -> Dict[str, int]:
     """
     Update a user.
     """
@@ -145,15 +161,17 @@ def update_user(
             status_code=404,
             detail="The user does not exists",
         )
-    if 'email' in user_in:
+    if user_in.email is not None:
         check_user = crud.user.get_by_email(collection, email=user_in.email)
         if check_user is not None:
             raise HTTPException(
                 status_code=400,
-                detail="The user with this username already exists in the system."
+                detail="The user with this username already exists in the system.",
             )
-    matched_count, modified_count = crud.user.update(collection, id=user_id, document_in=user_in)
-    return {'matched_count': matched_count, 'modified_count': modified_count}
+    matched_count, modified_count = crud.user.update(
+        collection, id=user_id, document_in=user_in
+    )
+    return {"matched_count": matched_count, "modified_count": modified_count}
 
 
 @router.delete("/{user_id}", response_model=schemas.DeleteResponse)
@@ -161,10 +179,10 @@ def delete_user(
     *,
     user_id: str,
     current_user: schemas.UserInDB = Depends(deps.get_current_active_superuser),
-    collection = Depends(deps.get_user_collection),
-) -> Any:
+    collection: Any = Depends(deps.get_user_collection),
+) -> Dict[str, int]:
     """
     Delete a user.
     """
     deleted_count = crud.user.delete(collection, id=user_id)
-    return {'deleted_count': deleted_count}
+    return {"deleted_count": deleted_count}
