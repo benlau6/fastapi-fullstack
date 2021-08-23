@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A FastAPI project template with CRUD, authentication, authorization, documentation, testing, and frontend.
+A FastAPI project template with frontend, authentication, authorization, CRUD, documentation, testing.
 
 [Documentation](https://benlau6.github.io/fastapi-fullstack)
 
