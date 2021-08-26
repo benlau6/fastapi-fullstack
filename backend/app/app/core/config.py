@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 import secrets
 import os
 
-from pydantic import BaseSettings, PostgresDsn, validator
+from pydantic import BaseSettings, validator
 
 
 # env will be read in case-insensitive way by pydantic BaseSettings
@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     MONGO_PORT: str = "27017"
     # MONGO DATA
     MONGO_DB_NAME: str = "fastapi"
+    # SQL
+    SQLITE_FILE_NAME: str = "dev.db"
     # API path
     ROOT_STR: str = "/api"
     API_V1_STR: str = "/v1"
@@ -48,6 +50,11 @@ class Settings(BaseSettings):
     # it could read a env file
     # class Config:
     #    env_file = '.env'
+
+    @property
+    def SQLITE_URI(self) -> str:
+        # 4 slashes for absolute path
+        return f"sqlite:////data/db/{self.SQLITE_FILE_NAME}"
 
     @property
     def MONGO_URI(self) -> str:

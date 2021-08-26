@@ -3,8 +3,7 @@ import os
 import shutil
 
 import asyncio
-from fastapi import APIRouter
-from fastapi import File, UploadFile, Depends, BackgroundTasks
+from fastapi import APIRouter, Depends, File, UploadFile, BackgroundTasks
 
 from app import schemas
 from app.core import config

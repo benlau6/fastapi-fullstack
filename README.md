@@ -22,6 +22,7 @@ A FastAPI project template with frontend, authentication, authorization, CRUD, d
 - [fastapi-permission](https://github.com/holgi/fastapi-permissions) ([doc](https://github.com/holgi/fastapi-permissions/blob/master/README.md)) for row-based security control.
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin))
 - [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
+- [sqlmodel](https://github.com/tiangolo/sqlmodel) ([doc](https://sqlmodel.tiangolo.com/)) for sql models and orm.
 - [pymongo](https://github.com/mongodb/mongo-python-driver) ([doc](https://pymongo.readthedocs.io/en/stable/tutorial.html)) for connecting MongoDB
 - [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
 - [pydantic](https://github.com/samuelcolvin/pydantic/) ([doc](https://pydantic-docs.helpmanual.io/)) for data validation

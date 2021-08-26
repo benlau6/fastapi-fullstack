@@ -17,11 +17,13 @@ from fastapi_permissions import configure_permissions
 from fastapi_permissions import Authenticated, Everyone
 from pydantic import ValidationError
 from jose import jwt
+from sqlmodel import Session
 
 from app import schemas, crud
 from app.core import security, config
 from app.core.config import settings
 from app.db.mongo import client
+from app.db.sql_db import engine
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.TOKEN_URL)
@@ -40,6 +42,10 @@ def get_db(settings: config.Settings = Depends(get_settings)) -> Any:
 def get_user_collection(db: Any = Depends(get_db)) -> Any:
     return db.user
 
+
+def get_session():
+    with Session(engine) as session:
+        yield session
 
 # could be used for fine-grained control
 async def verify_content_length(content_length: int = Header(...)) -> None:

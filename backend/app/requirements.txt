@@ -1,5 +1,6 @@
 fastapi
 fastapi-permissions
+sqlmodel
 pydantic[email, dotenv]
 pymongo
 python-multipart

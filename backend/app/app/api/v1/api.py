@@ -5,7 +5,14 @@ from app import schemas
 from app.core.config import settings
 from app.api import deps
 from app.api.deps import Permission
-from app.api.v1.endpoints import upload, download, users, auth
+from app.api.v1.endpoints import (
+    auth,
+    users,
+    upload,
+    download,
+    heroes,
+    teams,
+)
 
 
 # fastapi-permission
@@ -17,6 +24,8 @@ router = APIRouter(prefix="/v1")
 
 router.include_router(auth.router, prefix="/auth", tags=["auth"])
 router.include_router(users.router, prefix="/users", tags=["users"])
+router.include_router(heroes.router, prefix="/heroes", tags=["heroes"])
+router.include_router(teams.router, prefix="/teams", tags=["teams"])
 
 router.include_router(
     upload.router,
