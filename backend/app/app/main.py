@@ -8,6 +8,7 @@ from app.core.config import settings
 from app.api.v1.api import router as v1_router
 from app.db import sql_db
 
+
 def create_app(settings: config.Settings) -> FastAPI:
     app = FastAPI(root_path=settings.ROOT_STR)
 
@@ -36,9 +37,11 @@ app = create_app(settings)
 
 
 # in case it is needed
-@app.on_event('startup')
+@app.on_event("startup")
 def startup() -> None:
-   sql_db.create_db_and_tables()
+    sql_db.create_db_and_tables()
+
+
 #
 #
 # @app.on_event('shutdown')

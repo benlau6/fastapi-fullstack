@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
@@ -10,8 +10,10 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.post("/teams/", response_model=models.TeamRead)
-def create_team(*, session: Session = Depends(deps.get_session), team: models.TeamCreate):
+@router.post("/", response_model=models.TeamRead)
+def create_team(
+    *, session: Session = Depends(deps.get_session), team: models.TeamCreate
+) -> models.Team:
     db_team = models.Team.from_orm(team)
     session.add(db_team)
     session.commit()
@@ -19,32 +21,34 @@ def create_team(*, session: Session = Depends(deps.get_session), team: models.Te
     return db_team
 
 
-@router.get("/teams/", response_model=List[models.TeamRead])
+@router.get("/", response_model=List[models.TeamRead])
 def read_teams(
     *,
     session: Session = Depends(deps.get_session),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
-):
+) -> List[models.Team]:
     teams = session.exec(select(models.Team).offset(offset).limit(limit)).all()
     return teams
 
 
-@router.get("/teams/{team_id}", response_model=models.TeamReadWithHeroes)
-def read_team(*, team_id: int, session: Session = Depends(deps.get_session)):
+@router.get("/{team_id}", response_model=models.TeamReadWithHeroes)
+def read_team(
+    *, team_id: int, session: Session = Depends(deps.get_session)
+) -> models.Team:
     team = session.get(models.Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     return team
 
 
-@router.patch("/teams/{team_id}", response_model=models.TeamRead)
+@router.patch("/{team_id}", response_model=models.TeamRead)
 def update_team(
     *,
     session: Session = Depends(deps.get_session),
     team_id: int,
     team: models.TeamUpdate,
-):
+) -> models.Team:
     db_team = session.get(models.Team, team_id)
     if not db_team:
         raise HTTPException(status_code=404, detail="Team not found")
@@ -58,7 +62,9 @@ def update_team(
 
 
 @router.delete("/teams/{team_id}")
-def delete_team(*, session: Session = Depends(deps.get_session), team_id: int):
+def delete_team(
+    *, session: Session = Depends(deps.get_session), team_id: int
+) -> Dict[str, bool]:
     team = session.get(models.Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")

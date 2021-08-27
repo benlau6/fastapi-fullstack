@@ -1,6 +1,6 @@
-fastapi
-fastapi-permissions
 sqlmodel
+fastapi>=0.68.1
+fastapi-permissions
 pydantic[email, dotenv]
 pymongo
 python-multipart

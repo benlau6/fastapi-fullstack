@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Any, List
+from typing import Any, Generator, List
 
 from fastapi import (
     Header,
@@ -43,9 +43,10 @@ def get_user_collection(db: Any = Depends(get_db)) -> Any:
     return db.user
 
 
-def get_session():
+def get_session() -> Generator:
     with Session(engine) as session:
         yield session
+
 
 # could be used for fine-grained control
 async def verify_content_length(content_length: int = Header(...)) -> None:

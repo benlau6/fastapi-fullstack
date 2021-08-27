@@ -35,4 +35,3 @@ class HeroUpdate(SQLModel):
     secret_name: Optional[str] = None
     age: Optional[int] = None
     team_id: Optional[int] = None
-    
