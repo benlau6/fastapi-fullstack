@@ -1,60 +1,72 @@
 from datetime import timedelta
-from typing import Any, Dict
+from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlmodel import Session, select
 
-from app import crud, schemas
 from app.api import deps
-from app.core import security
 from app.core.config import settings
-from app.core.security import get_password_hash
-
-# from app.utils import (
-#    generate_password_reset_token,
-#    send_reset_password_email,
-#    verify_password_reset_token,
-# )
+from app.core.response import ok
+from app.core.security import create_access_token, verify_password
+from app.models.user import User
+from app.schemas.edu_base import LoginIn
 
 router = APIRouter()
 
 
-@router.post("/login/access-token", response_model=schemas.Token)
-def login_for_access_token(
-    collection: Any = Depends(deps.get_user_collection),
+def _build_token_response(user: User) -> dict:
+    expires_in = 60
+    token = create_access_token(
+        data={"sub": str(user.id), "scopes": ["role:admin"]},
+        expires_delta=timedelta(minutes=expires_in),
+    )
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "expires_in": expires_in * 60,
+    }
+
+
+@router.post("/login/access-token")
+def login_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
-) -> Dict[str, str]:
-    """
-    OAuth2 compatible token login, get an access token for future requests
-    """
-    user = crud.user.authenticate(
-        collection, email=form_data.username, password=form_data.password
+    session: Session = Depends(deps.get_session),
+) -> dict:
+    stmt = select(User).where(User.username == form_data.username)
+    user = session.exec(stmt).first()
+    if user is None or not verify_password(form_data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="invalid_credentials")
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="inactive_user")
+    return ok(_build_token_response(user))
+
+
+@router.post("/login")
+def login_json(payload: LoginIn, session: Session = Depends(deps.get_session)) -> dict:
+    stmt = select(User).where(User.username == payload.username)
+    user = session.exec(stmt).first()
+    if user is None or not verify_password(payload.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="invalid_credentials")
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="inactive_user")
+    return ok(_build_token_response(user))
+
+
+@router.get("/me")
+def read_me(current_user: User = Depends(deps.get_current_sql_user)) -> dict:
+    return ok(
+        {
+            "id": current_user.id,
+            "username": current_user.username,
+            "role": current_user.role,
+            "is_active": current_user.is_active,
+            "created_at": current_user.created_at,
+            "scopes": ["role:admin"],
+        }
     )
-    if user is None:
-        raise HTTPException(status_code=401, detail="Incorrect email or password")
-    elif not crud.user.is_active(user):
-        raise HTTPException(status_code=400, detail="Inactive user")
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = security.create_access_token(
-        data={"sub": str(user["_id"]), "scopes": user["scopes"]},
-        expires_delta=access_token_expires,
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.post("/test-token", response_model=schemas.UserFromDB)
-def test_token(
-    current_user: schemas.UserInDB = Depends(deps.get_current_user),
-) -> schemas.UserInDB:
-    """
-    Test access token
-    """
-    return current_user
-
-
-@router.post("/logout", response_model=schemas.Msg)
-def logout() -> Dict[str, str]:
-    """
-    Do nothing, logout at client side
-    """
-    return {"msg": "Logout successful"}
+@router.post("/logout")
+def logout() -> dict:
+    return ok({"msg": "logout_ok"})

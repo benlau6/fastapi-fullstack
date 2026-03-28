@@ -1,20 +1,16 @@
 import request from '@/utils/request'
 
 export function login(data) {
-  const form = new FormData()
-  form.append('username', data.username)
-  form.append('password', data.password)
   return request({
-    url: '/auth/login/access-token',
+    url: '/auth/login',
     method: 'post',
-    data: form
+    data
   })
 }
 
 export function getInfo() {
-  // pass token by authorization headers, which added by service.interceptors.request
   return request({
-    url: '/users/me',
+    url: '/auth/me',
     method: 'get'
   })
 }

@@ -2,7 +2,8 @@ from typing import Any, Dict, List, Optional, Union
 import secrets
 import os
 
-from pydantic import BaseSettings, validator
+from pydantic import validator
+from pydantic_settings import BaseSettings
 
 
 # env will be read in case-insensitive way by pydantic BaseSettings
@@ -53,8 +54,7 @@ class Settings(BaseSettings):
 
     @property
     def SQLITE_URI(self) -> str:
-        # 4 slashes for absolute path
-        return f"sqlite:////data/db/{self.SQLITE_FILE_NAME}"
+        return f"sqlite:///./{self.SQLITE_FILE_NAME}"
 
     @property
     def MONGO_URI(self) -> str:
