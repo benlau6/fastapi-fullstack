@@ -1,34 +1,59 @@
-# fastapi-fullstack
+# fastapi-edu-lite
 
-## Introduction
+## 介绍
 
-A FastAPI project template with frontend, authentication, authorization, CRUD, documentation, testing.
+基于 `benlau6/fastapi-fullstack` 改造的轻量教务管理系统，包含前后端配套、JWT 认证、管理员权限与基础数据 CRUD。
 
-[Documentation](https://benlau6.github.io/fastapi-fullstack)
+## 功能范围（第一版）
 
-## Features
+- 管理员登录（JWT）
+- 学生管理 CRUD
+- 教师管理 CRUD
+- 课程管理 CRUD
+- 班级管理 CRUD
+- 统一响应结构 `{code,message,data}`
+- 前端中文界面（菜单、按钮、提示、表头）
 
-- [X] User system
-- [X] Authorization per user, per row, per route
-- [X] JWT authentication
-- [X] Automatic OpenAPI documentation
-- [X] Test automation
-- [X] Type checking
-- [X] Vue frontend
+## 默认账号
 
-## Thanks to
+- 用户名：`admin`
+- 密码：`admin123`
 
-- [fastapi](https://github.com/tiangolo/fastapi) ([doc](https://fastapi.tiangolo.com/)) for one of the best api framework in python. Don't skip the doc if you just knew it. It is perfectly written.
-- [fastapi-permission](https://github.com/holgi/fastapi-permissions) ([doc](https://github.com/holgi/fastapi-permissions/blob/master/README.md)) for row-based security control.
-- [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ([doc](https://panjiachen.github.io/vue-element-admin-site/)) ([demo](https://panjiachen.github.io/vue-element-admin))
-- [traefik](https://github.com/traefik/traefik) ([doc](https://doc.traefik.io/traefik/)) for reverse proxy and payload size limiting.
-- [sqlmodel](https://github.com/tiangolo/sqlmodel) ([doc](https://sqlmodel.tiangolo.com/)) for sql models and orm.
-- [pymongo](https://github.com/mongodb/mongo-python-driver) ([doc](https://pymongo.readthedocs.io/en/stable/tutorial.html)) for connecting MongoDB
-- [pytest](https://github.com/pytest-dev/pytest) ([doc](https://docs.pytest.org/)) for testing
-- [pydantic](https://github.com/samuelcolvin/pydantic/) ([doc](https://pydantic-docs.helpmanual.io/)) for data validation
-- [pycodestyle](https://github.com/PyCQA/pycodestyle) for python style checking
-- [black](https://github.com/psf/black) for automatic PEP8 formatting
-- [mypy](https://github.com/python/mypy) ([doc](https://mypy.readthedocs.io/en/stable/)) for type checking
+## 本地启动
+
+### 后端
+
+```bash
+cd backend/app
+/workspace/.venv/bin/pip install -r requirements.txt
+/workspace/.venv/bin/pip install httpx pydantic-settings
+/workspace/.venv/bin/pytest -q
+/workspace/.venv/bin/python -m uvicorn app.main:app --reload --port 3000
+```
+
+后端文档：`http://127.0.0.1:3000/docs`
+
+### 前端
+
+```bash
+cd frontend/app
+PATH="/workspace/tools/node-v20.19.5-musl/bin:$PATH" npm install
+PATH="/workspace/tools/node-v20.19.5-musl/bin:$PATH" npm run test:unit -- --runInBand tests/unit/views/login.cn.spec.js tests/unit/views/dashboard.cn.spec.js tests/unit/views/menu.cn.spec.js tests/unit/views/messages.cn.spec.js
+PATH="/workspace/tools/node-v20.19.5-musl/bin:$PATH" npm run build:prod
+```
+
+## 验收检查
+
+- 后端测试：`23 passed`
+- 前端中文单测：`4 passed`
+- 前端构建：`build:prod` 成功
+- 四模块接口与页面已联通，删除返回 `200 + data:null`
+- 错误语义：`401/403/409/422` 已覆盖
+
+## 说明
+
+- 本仓库为模板改造版，保留了部分原始示例代码目录。
+- 当前目标是“轻量可用第一版”，后续可扩展选课、成绩与多角色权限。
 
 
 <small>
@@ -37,38 +62,3 @@ You may also wanna check [fastapi-pynamodb-lambda-simple](https://github.com/ben
 
 </small>
 
-## Installation
-
-``` bash
-git clone https://github.com/benlau6/fastapi-fullstack.git
-cd fastapi-fullstack
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
-```
-
-## Play it
-
-- Backend: Browse <http://127.0.0.1/api/docs>
-- Frontend: Browse <http://127.0.0.1>
-
-## Reference
-
-- Authentication
-    - [jwt auth](https://segmentfault.com/a/1190000023185139)
-- Nginx
-    - [Is Nginx used and working?](https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/401)
-    - [构建发布docker](https://github.com/PanJiaChen/vue-element-admin/issues/592)
-    - [如何使用 docker 部署前端项目](https://shanyue.tech/frontend-engineering/docker.html)
-- Cookie
-    - [What is cookie?](https://shubo.io/cookies/)
-- Tutorial
-    - [hands on experience in vue-admin](https://juejin.cn/post/6844903840626507784)
-    - [conclusion in vue-element-admin](https://www.gushiciku.cn/pl/pw8i/zh-tw)
-- Project structure
-    - [full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql/tree/master/%7B%7Bcookiecutter.project_slug%7D%7D/frontend)
-    - [dispatch](https://github.com/Netflix/dispatch)
-- Docker-compose
-    - [overriding](https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
-
-## License
-
-This project is licensed under the terms of the MIT license.

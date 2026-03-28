@@ -44,34 +44,35 @@ service.interceptors.response.use(
    */
   response => {
     const hasData = response.data != null
-    const hasDetail = hasData ? response.data.detail != null : false
-    const res = {
-      'code': response.status,
-      'data': hasData ? response.data : null,
-      'message': hasDetail ? response.data.detail : null
+    if (hasData && response.data.code !== undefined) {
+      return response.data
     }
-    return res
+    return {
+      code: 0,
+      message: 'ok',
+      data: response.data
+    }
   },
   error => {
-    console.log('err' + error) // for debug
-    // if the custom code is not 20000, it is judged as an error.
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
-    // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-    if (error.response.status >= 400 && error.response.status < 500) {
-      // to re-login
-      MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-        confirmButtonText: 'Re-Login',
-        cancelButtonText: 'Cancel',
+    const status = error.response ? error.response.status : 500
+    if (status === 401) {
+      MessageBox.confirm('登录已失效，请重新登录', '会话过期', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         store.dispatch('user/resetToken').then(() => {
           location.reload()
         })
       })
+    } else if (status === 403) {
+      Message({ message: '无权限访问', type: 'error', duration: 3000 })
+    } else if (status === 409) {
+      Message({ message: '数据冲突，请检查唯一字段', type: 'error', duration: 3000 })
+    } else if (status === 422) {
+      Message({ message: '参数校验失败，请检查输入', type: 'error', duration: 3000 })
+    } else {
+      Message({ message: error.message, type: 'error', duration: 3000 })
     }
     return Promise.reject(error)
   }

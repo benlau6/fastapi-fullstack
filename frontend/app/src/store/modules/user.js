@@ -57,7 +57,7 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { scopes = data.scopes, name = data.email, avatar = 'https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png' } = data
+        const { scopes = data.scopes || ['role:admin'], name = data.username || '管理员', avatar = 'https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png' } = data
 
         // scopes must be a non-empty array
         if (!scopes || scopes.length <= 0) {

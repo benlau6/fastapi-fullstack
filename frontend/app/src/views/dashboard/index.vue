@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">Welcome {{ name }}</div>
+    <div class="dashboard-text">欢迎，{{ name }}</div>
     <br>
     <div class="dashboard-text">
-      permissions: [<br>
+      权限列表: [<br>
       <ul v-for="principal in scopes" :key="principal">{{ principal }}</ul>
       ]
     </div>
